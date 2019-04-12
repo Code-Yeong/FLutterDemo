@@ -1,0 +1,10 @@
+#Flutter Demo文件命名规范:
+## List类型的demo，文件名使用 'list_xxx.dart'
+
+## Animation类型的demo， 文件名使用 'anim_xxx.dart'
+
+## Opacity类型的demo, 文件名使用 'opacity_xxx.dart'
+
+## Clip类型的demo， 文件名使用 'clip_xxx.dart'
+
+# 类名命名规范，
