@@ -3,35 +3,35 @@ import 'package:flutter/material.dart';
 class TELifeCycleOfState extends StatefulWidget {
   @override
   State createState() {
-    print("parent createState");
+    print("parent-->createState");
     return _TELifeCycleOfState();
   }
 
   @override
   StatefulElement createElement() {
-    print("parent createElement");
+    print("parent-->createElement");
     return StatefulElement(this);
   }
 }
 
-class _TELifeCycleOfState extends State<TELifeCycleOfState> {
+class _TELifeCycleOfState extends State<TELifeCycleOfState> with WidgetsBindingObserver {
+  num _count = 0;
   @override
   void initState() {
     super.initState();
-    print("parent initState");
+    WidgetsBinding.instance.addObserver(this);
+    print("parent-->initState");
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print("parent didChangeDependencies");
+    print("parent-->didChangeDependencies");
   }
-
-  num count = 0;
 
   @override
   Widget build(BuildContext context) {
-    print("parent build");
+    print("parent-->build");
 
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +44,8 @@ class _TELifeCycleOfState extends State<TELifeCycleOfState> {
       ),
       body: Container(
         child: Center(
-//          child: Text('$count'),
           child: TETextWidget(
-            count: count,
+            count: _count,
           ),
         ),
       ),
@@ -54,7 +53,7 @@ class _TELifeCycleOfState extends State<TELifeCycleOfState> {
           icon: Icon(Icons.add),
           onPressed: () {
             setState(() {
-              ++count;
+              _count++;
             });
           }),
     );
@@ -62,41 +61,51 @@ class _TELifeCycleOfState extends State<TELifeCycleOfState> {
 
   @override
   void dispose() {
-    print("parent dispose");
+    print("parent-->dispose");
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    print("parent deactivate");
+    print("parent-->deactivate");
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    print("parent reassemble");
+    print("parent-->reassemble");
   }
 
   @override
   void didUpdateWidget(TELifeCycleOfState oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print("parent didUpdateWidget");
+    print("parent-->didUpdateWidget");
+  }
+
+  AppLifecycleState _state;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _state = state;
+    print("state is -> $_state");
   }
 }
 
 class TETextWidget extends StatefulWidget {
   TETextWidget({this.count});
   final num count;
-  @override
-  State createState() {
-    return _TETextWidget();
-  }
 
   @override
   StatefulElement createElement() {
-    print("child createElement");
+    print("child-->createElement");
     return StatefulElement(this);
+  }
+
+  @override
+  State createState() {
+    return _TETextWidget();
   }
 }
 
@@ -104,42 +113,42 @@ class _TETextWidget extends State<TETextWidget> {
   @override
   void initState() {
     super.initState();
-    print("child initState");
+//    print("child-->initState");
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print("child didChangeDependencies");
+//    print("child-->didChangeDependencies");
   }
 
   @override
   Widget build(BuildContext context) {
-    print("child build");
+//    print("child-->build");
     return Text('${widget.count}');
   }
 
   @override
   void dispose() {
-    print("child dispose");
+//    print("child-->dispose");
     super.dispose();
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    print("child deactivate");
+//    print("child-->deactivate");
   }
 
   @override
   void reassemble() {
     super.reassemble();
-    print("child reassemble");
+//    print("child-->reassemble");
   }
 
   @override
   void didUpdateWidget(TETextWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print("child didUpdateWidget");
+//    print("child-->didUpdateWidget");
   }
 }

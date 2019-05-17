@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/lifecycle_of_state.dart';
+import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
+import 'package:flutter_demo/random_position_widget/random_position_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -49,7 +50,16 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text("State生命周期"),
             ),
-          )
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new RandomPositionWidget());
+              },
+              child: Text("自由位置组件"),
+            ),
+          ),
         ],
       ),
     );
