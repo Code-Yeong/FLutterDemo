@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var app = getApp();
+// var app = getApp();
 Page({
     data: {
         speed:0.0,

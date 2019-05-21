@@ -1,0 +1,4 @@
+<!--pages/home/homePage.wxml-->
+<view>
+<video style='width:100%;height:300px;' show-fullscreen-btn="false" src='https://view.inews.qq.com/a/20190214V0FYYC00'></video>
+</view>

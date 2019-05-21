@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/home/homePage",
     "pages/index/index",
     "pages/logs/logs"
   ],
@@ -13,7 +14,7 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeEat",
     "navigationBarTextStyle": "black",
-    "enablePullDownRefresh":true
+    "enablePullDownRefresh": true
   },
   "sitemapLocation": "sitemap.json"
 }
