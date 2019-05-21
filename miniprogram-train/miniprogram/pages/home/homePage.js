@@ -1,64 +1,79 @@
+//homePage.js
+
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var app = getApp();
-Page({
-  data: {
-    speed: 0.0,
-    accuracy: 0.0,
-    latitude: 39.9840587078,
-    longitude: 116.3075780869,
-  },
-  bindViewTap: function () {
-    console.log("switch tabs");
-    wx.navigateTo({
-      url: '../logs/logs'
-    });
-  },
-  markertap: function (e) {
-    console.log("clicked");
-    wx.getLocation({
-      type: "GCJ02",
-      success: (res) => {
-        this.setData({
-          latitude: res.latitude,
-          longitude: res.longitude,
-        });
+//获取应用实例
+const app = getApp()
 
-      }
-    });
+Page({
+
+  urls:[
+    'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
+    'http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4',
+    'http://vfx.mtime.cn/Video/2019/03/19/mp4/190319222227698228.mp4',
+    'http://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4',
+    'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4'
+  ],
+
+  data: {
+    motto: 'Hello World',
+    userInfo: {},
+    videoUrl: 'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4',
+    hasUserInfo: false,
+    canIUse: wx.canIUse('button.open-type.getUserInfo')
+  },
+  //事件处理函数
+  bindViewTap: function () {
+    // wx.navigateTo({
+      // url: '../logs/logs'
+    // })
+    var palyontext = wx.createVideoContext('video1');
+    palyontext.play();
+  },
+
+  bindDetailTap:function(){
+    wx.navigateTo({
+      url: '../index/index'
+    })
   },
   onLoad: function () {
-    var _this = this;
-    var that = this
-    wx.showLoading({
-      title: "定位中",
-      mask: true
-    })
-    wx.getLocation({
-      type: 'GCJ02',
-      altitude: true,//高精度定位
-      //定位成功，更新定位结果
-      success: function (res) {
-        that.setData({
-          longitude: res.longitude,
-          latitude: res.latitude,
-          speed: res.speed,
-          accuracy: res.accuracy
-        })
-      },
-      //定位失败回调
-      fail: function () {
-        wx.showToast({
-          title: "定位失败",
-          icon: "none"
-        })
-      },
-
-      complete: function () {
-        //隐藏定位中信息进度
-        wx.hideLoading()
+    if (app.globalData.userInfo) {
+      this.setData({
+        userInfo: app.globalData.userInfo,
+        hasUserInfo: true,
+        videoUrl: "../mytestvideo.MP4"
+      })
+    } else if (this.data.canIUse) {
+      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+      // 所以此处加入 callback 以防止这种情况
+      app.userInfoReadyCallback = res => {
+        // this.setData({
+        //   userInfo: res.userInfo,
+        //   hasUserInfo: true
+        // })
       }
-
-    });
+    } else {
+      // 在没有 open-type=getUserInfo 版本的兼容处理
+      wx.getUserInfo({
+        success: res => {
+          app.globalData.userInfo = res.userInfo
+          this.setData({
+            userInfo: res.userInfo,
+            hasUserInfo: true,
+            videoUrl: "../mytestvideo.MP4"
+          })
+        }
+      })
+    }
+  
+  },
+  getUserInfo: function (e) {
+    console.log(e)
+    app.globalData.userInfo = e.detail.userInfo
+    this.setData({
+      userInfo: e.detail.userInfo,
+      hasUserInfo: true,
+      videoUrl: "../mytestvideo.MP4"
+    })
   }
-});
+})

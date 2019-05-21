@@ -1,1 +1,49 @@
-/* pages/home/homePage.wxss */
+/**homePage.wxss**/
+page{
+
+  align-items: top;
+  display: flex;
+}
+
+.userinfo {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 10rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+}
+
+.usermotto {
+  margin-top: 20px;
+  width: 100vw;
+}
+
+.detail{
+  position: absolute;
+  bottom: 115px;
+  right: 15px;
+}
+
+.like{
+  position: absolute;
+  bottom: 75px;
+  right: 15px;
+}
+
+.face{
+  position: absolute;
+  bottom: 35px;
+  right: 15px;
+}
