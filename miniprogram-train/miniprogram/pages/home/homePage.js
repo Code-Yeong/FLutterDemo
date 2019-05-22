@@ -18,6 +18,9 @@ Page({
   data: {
     motto: 'Hello World',
     userInfo: {},
+    shopName:'外婆家',
+    shopPic:'../images/shop.jpg',
+    shopInfo:'附近有103人也感兴趣',
     videoUrl: 'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4',
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo')
@@ -34,6 +37,11 @@ Page({
   bindDetailTap:function(){
     wx.navigateTo({
       url: '../index/index'
+    })
+  },
+  bindProfileTap: function () {
+    wx.navigateTo({
+      url: '../profile/profilePage'
     })
   },
   onLoad: function () {

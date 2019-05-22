@@ -1,15 +1,15 @@
 <!--index.wxml-->
     <view class="mapview">
-      <map id="1" bindtap="markertap" longitude="{{longitude}}" latitude="{{latitude}}" title="我的位置" show-location='true' show-compass='true' style="width: 100%;height: 55vh; position: absolute;" >
-        <cover-view>经度：{{longitude}}</cover-view>
+      <map id="1" bindtap="goTo" longitude="{{longitude}}" latitude="{{latitude}}" title="我的位置" show-location='true' show-compass='true' style="width: 100%;height: 55vh; position: absolute;" markers='{{markers}}'  polyline="{{polyline}}">
+        <!-- <cover-view>经度：{{longitude}}</cover-view>
         <cover-view>纬度：{{latitude}}</cover-view>
-         
+          -->
       </map>
       <view class='bottom-pannel'>
         <view class='top'>
-          <text style='color:#fff;font-size:18px;'>赤坂亭日本料理</text>
-          <text style='color:#fff;font-size:16px;'>xxx 评分:4.6 均价:261/人</text>
-          <view><image style='width:20px;height:20px;' src='../images/location.png'/><text style='color:#fff;font-size:16px;'>北京市海淀区xx广场xx楼xx号</text></view>
+          <text style='color:#fff;font-size:18px;'>{{shopName}}</text>
+          <text style='color:#fff;font-size:16px;'>[星星] 评分:4.6 均价:261/人</text>
+          <view><image style='width:20px;height:20px;' src='../images/location.png'/><text style='color:#fff;font-size:16px;'>{{address}}</text></view>
         </view>
         <view class='center'>
           <text>代金券</text>

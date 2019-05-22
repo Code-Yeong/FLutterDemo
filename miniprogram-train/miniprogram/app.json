@@ -2,7 +2,8 @@
   "pages": [
     "pages/home/homePage",
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/logs/logs",
+    "pages/profile/profilePage"
   ],
   "permission": {
     "scope.userLocation": {

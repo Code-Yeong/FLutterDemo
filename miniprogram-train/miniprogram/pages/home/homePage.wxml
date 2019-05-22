@@ -1,17 +1,19 @@
 <!--homePage.wxml-->
 <view class="container">
   <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+    <view>
+      <image bindtap="bindViewTaps" class="userinfo-avatar" src="{{shopPic}}" mode="cover"></image>
+      <view class="shopinfo">
+        <text class="shopName">{{shopName}}</text>
+        <text class="shopDesp">{{shopInfo}}</text>
+      </view>
+    </view>
   </view>
   <view class="usermotto">
-    <video id='video1' autoplay='{{false}}' show-center-play-btn="{{false}}" src='{{videoUrl}}' controls="true" objectFit="cover" controls>
+    <video class='videoView' id='video1' autoplay='{{false}}' show-center-play-btn="{{false}}" src='{{videoUrl}}' controls="true" objectFit="cover" controls>
     </video>
   </view>
   <image class='detail' bindtap="bindDetailTap" style='width:30px;height:30px;' src='../images/food.png'></image>
-  <image class='like' bindtap="bindDetailTap" style='width:30px;height:30px;' src='../images/heart.png'></image>
-  <image class='face' bindtap="bindDetailTap" style='width:30px;height:30px;' src='../images/face.png'></image>
+  <image class='like' bindtap="bindLikeTap" style='width:30px;height:30px;' src='../images/heart.png'></image>
+  <image class='face' bindtap="bindProfileTap" style='width:30px;height:30px;' src='../images/face.png'></image>
 </view>
