@@ -4,13 +4,13 @@
     <view>
       <image bindtap="bindViewTaps" class="userinfo-avatar" src="{{shopPic}}" mode="cover"></image>
       <view class="shopinfo">
-        <text class="shopName">{{shopName}}</text>
+        <text class="shopName">{{shopInfoList[currIndex].info.name}}</text>
         <text class="shopDesp">{{shopInfo}}</text>
       </view>
     </view>
   </view>
   <view class="usermotto">
-    <video class='videoView' id='video1' autoplay='{{false}}' show-center-play-btn="{{false}}" src='{{videoUrl}}' controls="true" objectFit="cover" controls>
+    <video class='videoView' id='video1' autoplay='{{false}}' show-center-play-btn="{{false}}" src='{{shopInfoList[currIndex].url_video}}' controls="true" objectFit="cover" controls>
     </video>
   </view>
   <image class='detail' bindtap="bindDetailTap" style='width:30px;height:30px;' src='../images/food.png'></image>

@@ -46,9 +46,13 @@ Page({
         }
       });
     },
-    onLoad: function () {
-        var _this = this;
+    onLoad: function (params) {
+    
+      var _this = this;
       var that = this
+      that.setData({
+        shopName:params.shopName,
+      });
       wx.showLoading({
         title: "定位中",
         mask: true

@@ -1,2 +1,39 @@
 <!--pages/profile/profilePage.wxml-->
-<text>pages/profile/profilePage.wxml</text>
+<view class='body'>
+  <view class='header'>
+    <image class='avatar' src='../images/shop.jpg'></image>
+    <view class='info'>
+      <view class='detail'>
+        <view class='left'>
+          <text style=''>10</text>
+          <text style='color:#ccc;'>吃过</text>
+        </view>
+        <view class='right'>
+          <text>28</text>
+          <text style='color:#ccc;'>喜欢</text>
+        </view>
+      </view>
+      <view class='edit'>
+        <button class='btn'>编辑资料</button>
+      </view>
+    </view>
+  </view>
+  <view class='moto'>梦想是吃遍中国所有的小吃～</view>
+  <view class='history-table-wrap'>
+    <view class="table">
+      <!-- <view class="tr">
+          <view class="th th1">日期</view>
+          <view class="th th2">时间</view>
+          <view class="th th3">伤害</view>
+      </view> -->
+      <view class="tr" wx:for="{{videoData}}" wx:for-index="idx" wx:for-tem="item" wx:key="*this">
+        <view wx:if="{{idx%3==0&&idx>0}}" style='width:100%;'>
+          <video class="td td1" src='{{videoData[idx-3]}}'></video>
+          <video class="td td1" src='{{videoData[idx-2]}}'></video>
+          <video class="td td1" src='{{videoData[idx-1]}}'></video>
+        </view>
+      </view>
+    </view>
+ </view>
+</view>
+

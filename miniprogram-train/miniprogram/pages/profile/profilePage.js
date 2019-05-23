@@ -1,18 +1,32 @@
 // pages/profile/profilePage.js
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-
+    videoData:[],
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
-
+  onLoad: function () {
+    var that = this
+    var urls = [
+      'http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4',
+      'http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4',
+      'http://vfx.mtime.cn/Video/2019/03/19/mp4/190319222227698228.mp4',
+      'http://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4',
+      'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4'
+    ];
+    that.setData({
+      videoData: urls,
+    });
+   
+    
   },
 
   /**

@@ -18,6 +18,8 @@ Page({
   data: {
     motto: 'Hello World',
     userInfo: {},
+    shopInfoList:[],
+    currIndex:0,
     shopName:'外婆家',
     shopPic:'../images/shop.jpg',
     shopInfo:'附近有103人也感兴趣',
@@ -35,8 +37,9 @@ Page({
   },
 
   bindDetailTap:function(){
+    var that = this;
     wx.navigateTo({
-      url: '../index/index'
+      url: '../index/index?shopName='+that.data.shopInfoList[that.data.currIndex].info.name,
     })
   },
   bindProfileTap: function () {
@@ -45,6 +48,22 @@ Page({
     })
   },
   onLoad: function () {
+    var that= this;
+    wx.request({
+      url: 'http://188.131.219.244:7001/',
+      header:{'content-type':'application/json'},
+      success:function (res){
+        console.log(res.statusCode);
+        console.log(res.data);
+        that.setData({
+          shopInfoList: res.data.data,
+        });
+      },
+      fail:function(e){
+        console.log(e.errMsg);
+      }
+    })
+
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
