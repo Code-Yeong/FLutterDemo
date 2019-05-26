@@ -18,6 +18,27 @@ page{
   justify-content: center;
   bottom: 0px;
 }
+.bottom-pannel-1{
+  flex-grow:2;
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.bottom-pannel-2{
+  align-content: center;
+  align-items: center;
+   display: flex;
+  padding-left: 10px;
+  flex-grow:1; 
+}
+.bottom-pannel-3{
+  flex-grow:2;
+  padding-left: 10px;
+  align-content: center;
+  align-items: center;
+   display: flex;
+}
 
 .top{
   width: 100%;
@@ -32,15 +53,93 @@ page{
   width: 100%;
   height: 30%;
   display: flex;
+  flex-direction: row;
+  align-items: left;
+  background-color: #fff;
+}
+
+.center-pic{
+  /* width: 100%; */
+  height: 100%;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: left; */
+  /* background-color: #fff; */
+}
+.center-inner{
+  width: 100%;
+  height: 100%;
+  display: flex;
   flex-direction: column;
   align-items: left;
   background-color: #fff;
+  padding-left: 10px;
+}
+
+
+.center-1{
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+.center-2{
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  color: #ccc;
 }
 
 .bottom{
   width: 100%;
   height: 35%;
+  /* display: flex; */
+  align-items: left;
+  background-color: #000;
+  white-space: nowrap;
+}
+
+.bottom-video{
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: left;
-  background-color: #ccc;
+  
+  white-space: nowrap;
+}
+
+.recomItem{
+   width:120px;
+   height:100%;
+   display:flex;
+   align-content: center;
+   justify-content:center;
+   align-items:center;
+}
+.sampleVideoView{
+   width:120px;
+   height:100%;
+}
+
+
+.video-play-btn{
+  position: absolute;
+  margin: auto;
+  width:20px;
+  height:20px;
+}
+
+.receive{
+  width:100px; 
+  height:100%;
+  font-size: 16px;
+  align-items: center;
+  display: flex;
+}
+.received{
+  width:100px; 
+  height:100%;
+  font-size: 16px;
+  align-items: center;
+  display: flex;
+  color: rgba(255, 0, 0, 0.329);
 }

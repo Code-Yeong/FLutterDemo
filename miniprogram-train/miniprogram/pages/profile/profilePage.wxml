@@ -26,7 +26,7 @@
           <view class="th th2">时间</view>
           <view class="th th3">伤害</view>
       </view> -->
-      <view class="tr" wx:for="{{videoData}}" wx:for-index="idx" wx:for-tem="item" wx:key="*this">
+      <view class="tr" wx:for="{{videoData}}" wx:for-index="idx" wx:for-item="item" wx:key="*this">
         <view wx:if="{{idx%3==0&&idx>0}}" style='width:100%;'>
           <video class="td td1" src='{{videoData[idx-3]}}'></video>
           <video class="td td1" src='{{videoData[idx-2]}}'></video>

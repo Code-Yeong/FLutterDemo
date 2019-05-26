@@ -1,25 +1,55 @@
 <!--index.wxml-->
     <view class="mapview">
-      <map id="1" bindtap="goTo" longitude="{{longitude}}" latitude="{{latitude}}" title="我的位置" show-location='true' show-compass='true' style="width: 100%;height: 55vh; position: absolute;" markers='{{markers}}'  polyline="{{polyline}}">
+      <map id="mymap" bindtap='moveToLocation' data-lat="{{latitude}}" data-lng="{{longitude}}"  longitude="{{longitude}}" latitude="{{latitude}}" title="我的位置" show-location='true' show-compass='true' style="width: 100%;height: 55vh; position: absolute;" markers='{{markers}}'  polyline="{{polyline}}" bindmarkertap='gotohere'>
         <!-- <cover-view>经度：{{longitude}}</cover-view>
         <cover-view>纬度：{{latitude}}</cover-view>
           -->
       </map>
       <view class='bottom-pannel'>
         <view class='top'>
-          <text style='color:#fff;font-size:18px;'>{{shopName}}</text>
-          <text style='color:#fff;font-size:16px;'>[星星] 评分:4.6 均价:261/人</text>
-          <view><image style='width:20px;height:20px;' src='../images/location.png'/><text style='color:#fff;font-size:16px;'>{{address}}</text></view>
+          <view class='bottom-pannel-1'>
+            <text style='color:#fff;font-size:16px;'>{{shopInfo.name}}</text>
+          </view>
+          <view class='bottom-pannel-2'>
+          <block wx:for='{{shopInfo.star}}' wx:key>
+            <image style='width:20px;height:20px;' src='../images/star.png'/>
+          </block>
+          <block wx:for='{{5-shopInfo.star}}' wx:key>
+            <image style='width:16px;height:16px;' src='../images/star_w.png'/>
+          </block>  
+          <text style='color:#fff;font-size:14px;'> 评分:{{shopInfo.score}}    均价:{{shopInfo.avgPrice}}/人</text>
+          </view>
+          <view class='bottom-pannel-3'>
+            <image style='width:30px;height:25px;' src='../images/location.png'/>
+            <text style='color:#fff;font-size:14px;'>{{shopInfo.address}}</text>
+            <image style='width:35px;height:30px;' src='../images/phone.png'/>
+          
+            <image style='width:35px;height:30px;' src='../images/like.png'/>
+          </view>
         </view>
         <view class='center'>
-          <text>代金券</text>
-          <text>100元代金券</text>
+          <image style='width:150px; height:100%;' src='{{cover}}'/>
+          <view class='center-inner'>
+            <view class='center-1'>
+            <text>代金券</text>
+            </view>
+            <view class='center-2'>
+              <text>100元代金券</text>
+            </view>
+          </view>
+          <text wx:if='{{received}}' class='received'>已领取</text>
+          <text wx:else class='receive' bindtap='receiveCard' >领取</text>
         </view>
         <view class='bottom'>
-          <video controls="true" objectFit="cover" controls style='width:120px;;height:100%;' show-fullscreen-btn="false" src='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4' autoplay='{{false}}'></video>
-          <video controls="true" objectFit="cover" controls style='width:120px;;height:100%;' show-fullscreen-btn="false" src='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4' autoplay='{{false}}'></video>
-          <video controls="true" objectFit="cover" controls style='width:120px;;height:100%;' show-fullscreen-btn="false" src='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4' autoplay='{{false}}'></video>
-          <video controls="true" objectFit="cover" controls style='width:120px;;height:100%;' show-fullscreen-btn="false" src='http://vfx.mtime.cn/Video/2019/03/21/mp4/190321153853126488.mp4' autoplay='{{false}}'></video>
+          <text style='color:white;font-size:14px;margin-left:10px;'>推荐菜</text>
+          <view class='bottom-video'>
+            <view class='recomItem' wx:for='{{shopList}}' wx:for-index='idx' wx:for-item='item' wx:key='*this'>
+              <video wx:if='{{playId==idx}}' class='sampleVideoView' id='video{{idx}}' autoplay='{{false}}' show-center-play-btn="{{false}}" src='{{item.url_video}}' controls="true" objectFit="cover" controls></video>
+
+              <image  wx:if='{{playId!=idx}}'  src='{{item.video_cover}}'  mode="objectFit" style='width:120px;height:100%;'></image>
+              <image bindtap='playSampleVideo' data-id='{{idx}}' class='video-play-btn' wx:if='{{playId!=idx}}'  src='../images/play.png'  mode="objectFit"></image>
+            </view>
+          </view>
         </view>
       </view>
     </view>

@@ -26,7 +26,14 @@ Page({
       videoData: urls,
     });
    
-    
+    wx.setNavigationBarColor({
+      frontColor: '#000000',
+      backgroundColor: '#ffffff',
+      animation: { // 可选项
+        duration: 400,
+        timingFunc: 'easeIn'
+      },
+    });
   },
 
   /**

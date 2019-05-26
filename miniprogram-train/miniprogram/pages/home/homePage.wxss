@@ -1,8 +1,8 @@
 /**homePage.wxss**/
 page{
-
   align-items: top;
   display: flex;
+  background-color: #000;
 }
 
 .userinfo {
@@ -26,7 +26,12 @@ page{
 .shopName{
   font-size: 20px;
   font-weight: bold;
-  color: #000;
+  color: #fff;
+}
+
+.shopDesp{
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.616);
 }
 
 .userinfo-avatar {
@@ -66,4 +71,20 @@ page{
   position: absolute;
   bottom: 35px;
   right: 15px;
+}
+
+.video-play-btn{
+  position: absolute;
+  width: 50rpx;
+  height: 50rpx;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto
+}
+
+.shadow_img{
+  position: fixed;
+  right: 60px;
 }
