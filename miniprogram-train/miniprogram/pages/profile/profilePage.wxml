@@ -1,7 +1,9 @@
 <!--pages/profile/profilePage.wxml-->
 <view class='body'>
   <view class='header'>
-    <image class='avatar' src='../images/shop.jpg'></image>
+    <view class='avatar'>
+      <image class='avatar-pic' src='../images/shop.jpg'></image>
+    </view>
     <view class='info'>
       <view class='detail'>
         <view class='left'>
@@ -14,23 +16,39 @@
         </view>
       </view>
       <view class='edit'>
-        <button class='btn'>编辑资料</button>
+        <text class='btn'>编辑资料</text>
       </view>
     </view>
   </view>
   <view class='moto'>梦想是吃遍中国所有的小吃～</view>
+  <view class='sta'>
+    <view class='sta-item'>获赞:29</view>
+    <view class='sta-item'>关注:32</view>
+    <view class='sta-item'>粉丝:14</view>
+  </view>
+  
   <view class='history-table-wrap'>
     <view class="table">
-      <!-- <view class="tr">
-          <view class="th th1">日期</view>
-          <view class="th th2">时间</view>
-          <view class="th th3">伤害</view>
-      </view> -->
       <view class="tr" wx:for="{{videoData}}" wx:for-index="idx" wx:for-item="item" wx:key="*this">
-        <view wx:if="{{idx%3==0&&idx>0}}" style='width:100%;'>
-          <video class="td td1" src='{{videoData[idx-3]}}'></video>
-          <video class="td td1" src='{{videoData[idx-2]}}'></video>
-          <video class="td td1" src='{{videoData[idx-1]}}'></video>
+        <view wx:if="{{idx%3==0&&idx>0}}" style='width:100%;display:flex;flex-direction:row;'>
+          <view class="td td1" >
+            <video wx:if='{{playIndex == idx-3}}' id='video{{idx-3}}' bindended='bindEnded' autoplay='{{false}}' show-center-play-btn="{{false}}"  style='width:100%;height:100%' src='{{videoData[idx-3]}}' controls="true" objectFit="cover" controls></video>
+            <image wx:if='{{playIndex != idx-3}}' src='../images/{{idx-3}}.jpg' mode="objectFit" style='width:100%;height:100%;'></image>
+            <image bindtap='playSampleVideo' data-id='{{idx-3}}' class='video-play-btn' wx:if='{{playIndex != idx-3}}' src='../images/play.png' mode="objectFit"></image>
+            <cover-view data-id='{{idx-3}}' bindtap='playSampleVideo' mode="objectFit" class='cover-view'><cover-view class='likeView'><cover-image style='width:20px;height:20px;' src='../images/likew.png'/>  <cover-view>32w</cover-view></cover-view></cover-view>
+          </view>
+           <view class="td td1" >
+             <video wx:if='{{playIndex == idx-2}}' id='video{{idx-2}}' autoplay='{{false}}' show-center-play-btn="{{false}}"  style='width:100%;height:100%' src='{{videoData[idx-2]}}' controls="true" objectFit="cover" controls></video>
+            <image wx:if='{{playIndex != idx-2}}' src='../images/{{idx-2}}.jpg' mode="objectFit" style='width:100%;height:100%;'></image>
+            <image bindtap='playSampleVideo' data-id='{{idx-2}}' class='video-play-btn' wx:if='{{playIndex != idx-2}}' src='../images/play.png' mode="objectFit"></image>
+            <cover-view data-id='{{idx-2}}' bindtap='playSampleVideo' mode="objectFit" class='cover-view'><cover-view class='likeView'><cover-image style='width:20px;height:20px;' src='../images/likew.png'/>  <cover-view>32w</cover-view></cover-view></cover-view>
+          </view>
+           <view class="td td1" >
+            <video wx:if='{{playIndex == idx-1}}' id='video{{idx-1}}' autoplay='{{false}}' show-center-play-btn="{{false}}"  style='width:100%;height:100%' src='{{videoData[idx-1]}}' controls="true" objectFit="cover" controls></video>
+            <image wx:if='{{playIndex != idx-1}}' src='../images/{{idx-1}}.jpg' mode="objectFit" style='width:100%;height:100%;'></image>
+            <image class='video-play-btn' wx:if='{{playIndex != idx-1}}' src='../images/play.png' mode="objectFit"></image>
+            <cover-view data-id='{{idx-1}}' bindtap='playSampleVideo' mode="objectFit" class='cover-view'><cover-view class='likeView'><cover-image style='width:20px;height:20px;' src='../images/likew.png'/>  <cover-view>32w</cover-view></cover-view></cover-view>
+          </view>
         </view>
       </view>
     </view>

@@ -18,6 +18,8 @@ Page({
       url: '../logs/logs'
     })
   },
+
+
   onLoad() {
     if (app.globalData.userInfo) {
       this.setData!({

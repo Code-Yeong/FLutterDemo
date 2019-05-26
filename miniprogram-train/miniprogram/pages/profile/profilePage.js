@@ -8,6 +8,7 @@ Page({
    */
   data: {
     videoData:[],
+    playIndex:-1,
   },
 
   /**
@@ -20,7 +21,9 @@ Page({
       'http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4',
       'http://vfx.mtime.cn/Video/2019/03/19/mp4/190319222227698228.mp4',
       'http://vfx.mtime.cn/Video/2019/03/19/mp4/190319212559089721.mp4',
-      'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4'
+      'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4',
+      'http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4',
+      'http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4',
     ];
     that.setData({
       videoData: urls,
@@ -33,6 +36,25 @@ Page({
         duration: 400,
         timingFunc: 'easeIn'
       },
+    });
+  },
+
+  playSampleVideo: function(e){
+    var that = this;
+    var idx = e.currentTarget.dataset.id;
+    console.log('play:'+idx);
+    this.setData({
+      playIndex: idx,
+    });
+    var palyontext = wx.createVideoContext('video' + idx);
+    palyontext.play();
+    
+  },
+
+  bindEnded:function(){
+    var that = this;
+    this.setData({
+      playIndex: -1,
     });
   },
 

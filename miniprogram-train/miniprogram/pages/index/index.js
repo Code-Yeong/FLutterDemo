@@ -18,6 +18,8 @@ Page({
         statusType:null,
         sampleUrls:[],
         playId:-1,
+        collopse:false,
+        mapH:51,
     },
     bindViewTap: function () {
       var info = e.currentTarget.dataset.info;
@@ -30,6 +32,22 @@ Page({
       });
       
     },
+
+
+  expand: function () {
+    var that = this;
+    that.setData({
+      collopse: false,
+      mapH: 51,
+    });
+  },
+  collopse: function () {
+    var that = this;
+    that.setData({
+      collopse: true,
+      mapH: 78,
+    });
+  },
     
     markertap:function(e){
       var info = e.currentTarget.dataset.info;
@@ -165,6 +183,7 @@ Page({
         }
 
       });
+      console.log(that.data.collopse);
     },
 
   receiveCard: function(){
