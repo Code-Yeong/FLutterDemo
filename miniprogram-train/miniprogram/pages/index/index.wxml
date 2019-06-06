@@ -8,10 +8,11 @@
     polyline="{{polyline}}" bindmarkertap='gotohere'>
   </map> -->
 
-<map id="mymap" bindtap='moveToLocation' data-lat="{{latitude}}" data-lng="{{longitude}}" longitude="{{longitude}}" latitude="{{latitude}}" title="我的位置" show-location='true' show-compass='true' style="width: 100%;height:{{mapH}}vh; position: absolute;" markers='{{markers}}'
-    polyline="{{polyline}}" bindmarkertap='gotohere'>
+<map id="mymap" bindtap='moveToLocation' data-lat="{{latitude}}" data-lng="{{longitude}}" longitude="{{longitude}}" latitude="{{latitude}}" title="我的位置" show-location='true' show-compass='true' style="width: 100%;height:{{mapH}}vh; position: absolute;" markers='{{markers}}' polyline="{{polyline}}" bindmarkertap='gotohere'>
+  <cover-view>{{relLat}}</cover-view>
+  <cover-view>{{relLng}}</cover-view>
   </map>
-
+  
   <view wx:if='{{collopse}}' class='bottom-pannel_coll'>
     <view class='top-coll'>
       <view style='color:white;display:flex;justify-content: center;' bindtap='expand'><image src='../images/arrows_up.png' style='width:30px;height:15px;' /></view>

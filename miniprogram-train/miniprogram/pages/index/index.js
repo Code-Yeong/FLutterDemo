@@ -2,37 +2,25 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var app = getApp();
 Page({
-    data: {
-        speed:0.0,
-        accuracy:0.0,
-        latitude: 39.980760,
-        longitude: 116.314740,
-        relLat:0.0,
-        relLng:0.0,
-        received:false,
-        shopInfo:null,
-        shopList:[],
-        cover:null,
-        markers:[],
-        polyline:null,
-        statusType:null,
-        sampleUrls:[],
-        playId:-1,
-        collopse:false,
-        mapH:51,
-    },
-    bindViewTap: function () {
-      var info = e.currentTarget.dataset.info;
-      wx.openLocation({ 
-        latitude: 38.9840587078, 
-        longitude: 117.3075780869, 
-        scale: 18, 
-        name: '测试地点', 
-        address: info.address
-      });
-      
-    },
-
+  data: {
+      speed:0.0,
+      accuracy:0.0,
+      latitude: 0.0,
+      longitude: 0.0,
+      relLat:0.0,
+      relLng:0.0,
+      received:false,
+      shopInfo:null,
+      shopList:[],
+      cover:null,
+      markers:[],
+      polyline:null,
+      statusType:null,
+      sampleUrls:[],
+      playId:-1,
+      collopse:false,
+      mapH:51,
+  },
 
   expand: function () {
     var that = this;
@@ -49,26 +37,27 @@ Page({
     });
   },
     
-    markertap:function(e){
-      var info = e.currentTarget.dataset.info;
-      wx.openLocation({
-        latitude: 38.9840587078,
-        longitude: 117.3075780869,
-        scale: 18,
-        name: '测试地点',
-        address: "BeiJing",
-      });
-      wx.getLocation({
-        type: "GCJ02",
-        success: (res) => {
-          this.setData({
-            latitude: res.latitude,
-            longitude: res.longitude,
-          });
+  // markertap:function(e){
+  //   var info = e.currentTarget.dataset.info;
+  //   wx.openLocation({
+  //     latitude: 38.9840587078,
+  //     longitude: 117.3075780869,
+  //     scale: 18,
+  //     name: '测试地点',
+  //     address: "BeiJing",
+  //   });
+  //   wx.getLocation({
+  //     type: "GCJ02",
+  //     success: (res) => {
+  //       this.setData({
+  //         latitude: res.latitude,
+  //         longitude: res.longitude,
+  //       });
 
-        }
-      });
-    },
+  //     }
+  //   });
+  // },
+
   playSampleVideo: function (e) {
     var that = this;
     that.setData({
@@ -245,6 +234,7 @@ Page({
   driving: function (toCoor, lat, lng) {
     var _this = this;     //网络请求设置
     var fromCoor = _this.data.relLat + ',' + _this.data.relLng;
+    console.log(fromCoor);
     this.mapCtx = wx.createMapContext('mymap'); //获取地图对象同canvas相似，获取后才能调用相应的方法
     this.mapCtx.moveToLocation() //将当前位置移动到地图中心
 

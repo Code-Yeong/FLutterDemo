@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
 
@@ -9,6 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      showSemanticsDebugger: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -35,13 +37,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: <Widget>[
-//          Align(
-//            alignment: Alignment.center,
-//            child: RaisedButton(
-//              onPressed: null,
-//              child: Text("交换角色动画"),
-//            ),
-//          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: null,
+              child: Text("交换角色动画"),
+            ),
+          ),
           Align(
             alignment: Alignment.center,
             child: RaisedButton(
@@ -58,6 +60,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 onItemClicked(new RandomPositionWidget());
               },
               child: Text("自由位置组件"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new GestureDetectorDemo());
+              },
+              child: Text("事件穿透"),
             ),
           ),
         ],
