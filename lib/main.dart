@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/cover_filter/cover_filter.dart';
+import 'package:flutter_demo/cross_fade/cross_fade_page.dart';
+import 'package:flutter_demo/directionality/directionality_page.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
+import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
 
@@ -40,7 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Align(
             alignment: Alignment.center,
             child: RaisedButton(
-              onPressed: null,
+              onPressed: () {
+//                onItemClicked(TEAnimChangeRoleWidget());
+              },
               child: Text("交换角色动画"),
             ),
           ),
@@ -69,6 +75,42 @@ class _MyHomePageState extends State<MyHomePage> {
                 onItemClicked(new GestureDetectorDemo());
               },
               child: Text("事件穿透"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new CoverFilter());
+              },
+              child: Text("渐变遮罩"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new DirectionalityDemo());
+              },
+              child: Text("Directionality"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new HeroMainPage());
+              },
+              child: Text("Hero动画"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new CrossFadeAnimation());
+              },
+              child: Text("交叉动画"),
             ),
           ),
         ],
