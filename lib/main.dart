@@ -5,6 +5,7 @@ import 'package:flutter_demo/directionality/directionality_page.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
 import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
+import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
 
 void main() => runApp(MyApp());
@@ -111,6 +112,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 onItemClicked(new CrossFadeAnimation());
               },
               child: Text("交叉动画"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new MethodChannelPage());
+              },
+              child: Text("Method channel"),
             ),
           ),
         ],
