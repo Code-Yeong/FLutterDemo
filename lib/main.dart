@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/cache/cache_manager_page.dart';
 import 'package:flutter_demo/cover_filter/cover_filter.dart';
 import 'package:flutter_demo/cross_fade/cross_fade_page.dart';
 import 'package:flutter_demo/directionality/directionality_page.dart';
+import 'package:flutter_demo/gesture_dector2/gesture_detector.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
 import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
@@ -120,7 +122,25 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 onItemClicked(new MethodChannelPage());
               },
-              child: Text("Method channel"),
+              child: Text("Method channel(only for Android)"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new CacheManagerPage());
+              },
+              child: Text("缓存管理"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new GestureDetectorPage());
+              },
+              child: Text("按钮事件"),
             ),
           ),
         ],
