@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/gesture_dector2/cover_page.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
 
 class GestureDetectorPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _GestureDetectorPageState extends State<GestureDetectorPage> {
                     btnColor = Colors.red;
 //                    showTopLayer = true;
                   });
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => GestureDetectorDemo()));
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CoverPage()));
                 },
                 onTapUp: (_) {
                   print('click:onTapUp');
