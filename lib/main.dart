@@ -9,6 +9,7 @@ import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
+import 'package:flutter_demo/webview/webview_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -141,6 +142,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 onItemClicked(new GestureDetectorPage());
               },
               child: Text("按钮事件"),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: RaisedButton(
+              onPressed: () {
+                onItemClicked(new WebViewPage());
+              },
+              child: Text("Webview"),
             ),
           ),
         ],
