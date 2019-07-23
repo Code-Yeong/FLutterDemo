@@ -33,9 +33,9 @@ class _WebViewPageState extends State<WebViewPage> {
               onPageFinished: (url){
                 print('on page finished:$url');
               },
-              debuggingEnabled: true,
+//              debuggingEnabled: true,
               javascriptMode: JavascriptMode.unrestricted,
-              javascriptChannels: <JavascriptChannel>[JavascriptChannel(name: 'demoBridge', onMessageReceived: null)].toSet(),
+              javascriptChannels: <JavascriptChannel>[JavascriptChannel(name: 'demoBridge', onMessageReceived: (msg){})].toSet(),
             ),
           ],
         )

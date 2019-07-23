@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/banner/banners.dart';
 import 'package:flutter_demo/cache/cache_manager_page.dart';
+import 'package:flutter_demo/change_role_widget/anim_change_role.dart';
 import 'package:flutter_demo/cover_filter/cover_filter.dart';
 import 'package:flutter_demo/cross_fade/cross_fade_page.dart';
 import 'package:flutter_demo/directionality/directionality_page.dart';
 import 'package:flutter_demo/gesture_dector2/gesture_detector.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
+import 'package:flutter_demo/hearo_animation/SizeAnimation.dart';
 import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
+import 'package:flutter_demo/shader_mask/shader_mask_page.dart';
 import 'package:flutter_demo/webview/webview_page.dart';
 
 void main() => runApp(MyApp());
@@ -45,122 +49,97 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: <Widget>[
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-//                onItemClicked(TEAnimChangeRoleWidget());
-              },
-              child: Text("交换角色动画"),
-            ),
+          Container(
+            child: _ChoiceEntry(text: '交换角色动画', route: TEAnimChangeRoleWidget()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new TELifeCycleOfState());
-              },
-              child: Text("State生命周期"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: 'State生命周期', route: TELifeCycleOfState()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new RandomPositionWidget());
-              },
-              child: Text("自由位置组件"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '自由位置组件', route: RandomPositionWidget()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new GestureDetectorDemo());
-              },
-              child: Text("事件穿透"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '事件穿透', route: GestureDetectorDemo()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new CoverFilter());
-              },
-              child: Text("渐变遮罩"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '渐变遮罩', route: CoverFilter()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new DirectionalityDemo());
-              },
-              child: Text("Directionality"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: 'Directionality', route: DirectionalityDemo()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new HeroMainPage());
-              },
-              child: Text("Hero动画"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: 'Hero动画', route: HeroMainPage()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new CrossFadeAnimation());
-              },
-              child: Text("交叉动画"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '交叉动画', route: CrossFadeAnimation()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new MethodChannelPage());
-              },
-              child: Text("Method channel(only for Android)"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '尺寸变化动画', route: SizeAnimationPage()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new CacheManagerPage());
-              },
-              child: Text("缓存管理"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: 'Method channel(only for Android)', route: MethodChannelPage()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new GestureDetectorPage());
-              },
-              child: Text("按钮事件"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '缓存管理', route: CacheManagerPage()),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: RaisedButton(
-              onPressed: () {
-                onItemClicked(new WebViewPage());
-              },
-              child: Text("Webview"),
-            ),
+
+          Container(
+            child: _ChoiceEntry(text: '按钮事件', route: GestureDetectorPage()),
+          ),
+
+//          Container(
+//            child: _ChoiceEntry(text:'Webview',route: WebViewPage()),
+//          ),
+
+          Container(
+            child: _ChoiceEntry(text: 'Banner', route: BannerPage(title: 'Banner')),
+          ),
+
+          Container(
+            child: _ChoiceEntry(text: 'ShaderMask', route: ShaderMaskPage(title: 'ShaderMask')),
           ),
         ],
       ),
     );
   }
+}
 
-  void onItemClicked(Widget route) {
+class _ChoiceEntry extends StatelessWidget {
+  final Widget route;
+  final String text;
+
+  _ChoiceEntry({this.text, this.route});
+
+  void onItemClicked(BuildContext context, Widget route) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return route;
     }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        onItemClicked(context, route);
+      },
+      child: Container(
+        width: double.infinity,
+        height: 80.0,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.symmetric(vertical: 1.0),
+        color: Colors.red.withOpacity(0.1),
+        child: Text('$text'),
+      ),
+    );
   }
 }

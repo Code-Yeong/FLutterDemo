@@ -12,7 +12,6 @@ class CacheManager with Cache{
     this.cacheType = type;
   }
 
-
   @override
   download(List<dynamic> urls) async{
 

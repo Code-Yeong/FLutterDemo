@@ -7,6 +7,7 @@ class CrossFadeAnimation extends StatefulWidget {
 
 class _CrossFadeAnimationState extends State<CrossFadeAnimation> {
   bool _first = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

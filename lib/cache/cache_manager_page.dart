@@ -20,6 +20,7 @@ class _CacheManagerPageState extends State<CacheManagerPage> {
       ),
       body: Container(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             RaisedButton(
               onPressed: () async{
