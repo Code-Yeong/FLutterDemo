@@ -8,6 +8,7 @@ class BannerPage extends BaseStatelessPage {
 
   @override
   Widget pageContent(BuildContext context) {
+    double _value = 0;
     return Container(
       color: Colors.green,
       child: Column(
