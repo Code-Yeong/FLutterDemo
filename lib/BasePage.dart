@@ -1,30 +1,5 @@
 import 'package:flutter/material.dart';
 
-abstract class BaseStatefulPage extends StatefulWidget {
-  final String title;
-
-  BaseStatefulPage({this.title});
-
-  @protected
-  Widget pageContent(BuildContext context);
-
-  @override
-  _BaseStatefulPageState createState() => _BaseStatefulPageState();
-}
-
-class _BaseStatefulPageState extends State<BaseStatefulPage> {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('${widget.title}'),
-        ),
-        body: widget.pageContent(context),
-      ),
-    );
-  }
-}
 //
 //class InheritedPageWidget extends InheritedWidget {
 //  final Key key;
