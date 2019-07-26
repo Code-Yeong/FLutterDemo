@@ -22,6 +22,7 @@ class _AnimatedListPageState extends State<AnimatedListPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('build...');
     return Scaffold(
       appBar: AppBar(
         title: Text('AnimatedList'),
@@ -39,6 +40,7 @@ class _AnimatedListPageState extends State<AnimatedListPage> {
                     onPressed: () {
                       list.insert(0, 'new');
                       listKey.currentState.insertItem(0);
+                      setState(() {});
                     },
                   ),
                   RaisedButton(
@@ -65,6 +67,7 @@ class _AnimatedListPageState extends State<AnimatedListPage> {
                           );
                         });
                         list.removeAt(0);
+                        setState(() {});
                       }
                     },
                   ),
@@ -91,6 +94,12 @@ class _AnimatedListPageState extends State<AnimatedListPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void didUpdateWidget(AnimatedListPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print('update....');
   }
 }
 

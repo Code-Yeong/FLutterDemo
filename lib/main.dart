@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/AnimatedList/animated_list.dart';
+import 'package:flutter_demo/AnimatedList/animated_list_page.dart';
 import 'package:flutter_demo/banner/banners.dart';
 import 'package:flutter_demo/cache/cache_manager_page.dart';
 import 'package:flutter_demo/change_role_widget/anim_change_role.dart';

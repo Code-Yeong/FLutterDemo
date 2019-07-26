@@ -7,15 +7,27 @@ class CoverFilter extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('渐变遮罩'),
+          title: Text('底部渐变遮罩'),
         ),
         body: Stack(
           alignment: Alignment.center,
           children: <Widget>[
             Positioned(
               child: Container(
-                color: Colors.black,
-                height: double.infinity,
+                color: Colors.black.withOpacity(0.1),
+                child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text("Item ${index++}"),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(
+                      height: 5.0,
+                    );
+                  },
+                  itemCount: 20,
+                ),
               ),
             ),
             Positioned(

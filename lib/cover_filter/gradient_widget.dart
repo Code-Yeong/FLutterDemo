@@ -35,7 +35,11 @@ class GradientMaskWidget extends StatelessWidget {
   final double radius;
   final Color color;
 
-  GradientMaskWidget({this.height = 32.0, this.radius = 16.0, this.color = Colors.white});
+  GradientMaskWidget({
+    this.height = 32.0,
+    this.radius = 16.0,
+    this.color = Colors.white,
+  });
 
   @override
   Widget build(BuildContext context) {

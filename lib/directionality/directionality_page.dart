@@ -13,8 +13,13 @@ class DirectionalityDemo extends StatelessWidget {
           height: 150.0,
           alignment: Alignment.center,
           child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text('hellowdlfjslfjlsafjdkslafjsdkaljhfjdskalhfkjdfdsfdsfdsfdsalshfjkdsahfkadslhfkdslafhks'),
+            textDirection: TextDirection.rtl,
+            child: Container(
+              child: Text(
+                '测试文字的排版方向，当前的方向是：${Directionality.of(context)}',
+                textDirection: Directionality.of(context),
+              ),
+            ),
           ),
         ),
       ),
