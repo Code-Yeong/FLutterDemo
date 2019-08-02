@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/gesture_dector2/cover_page.dart';
-import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
 
 class GestureDetectorPage extends StatefulWidget {
   @override

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/cache/cache.dart';
 import 'package:flutter_demo/cache/cache_manager.dart';

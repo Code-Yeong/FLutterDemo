@@ -13,7 +13,7 @@ class WebViewPage extends StatefulWidget {
 class _WebViewPageState extends State<WebViewPage> {
   final String _initialUrl = 'http://www.baidu.com';
 
-  WebViewController _controller;
+//  WebViewController _controller;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class _WebViewPageState extends State<WebViewPage> {
             WebView(
               initialUrl: _initialUrl,
               onWebViewCreated: (controller){
-                _controller = controller;
+//                _controller = controller;
               },
               onPageFinished: (url){
                 print('on page finished:$url');

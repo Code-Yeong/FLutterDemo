@@ -6,6 +6,7 @@ void main(){
   test('test getRect method',(){
     Builder(builder: (context){
       print(getRect(context));
+      return null;
     });
   });
 }

@@ -19,7 +19,7 @@ class _TEAnimChangeRoleWidgetState extends State<TEAnimChangeRoleWidget> {
 }
 
 class _TEMyCustomPainter extends CustomPainter {
-  Paint _paint = new Paint();
+//  Paint _paint = new Paint();
 
   @override
   void paint(Canvas canvas, Size size) {
