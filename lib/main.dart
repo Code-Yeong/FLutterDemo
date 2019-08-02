@@ -15,6 +15,7 @@ import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
 import 'package:flutter_demo/shader_mask/shader_mask_page.dart';
 import 'package:flutter_demo/slider/slider_page.dart';
+import 'package:flutter_demo/split_sentence/main_page.dart';
 import 'package:flutter_demo/webview/webview_page.dart';
 
 void main() => runApp(MyApp());
@@ -98,8 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: 'Slider(Flutter v1.7+)', route: SliderPage()),
-          ),Container(
+          ),
+          Container(
             child: _ChoiceEntry(text: 'AnimatedList', route: AnimatedListPage()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '句子分割', route: SplitSentencePage()),
           ),
         ],
       ),

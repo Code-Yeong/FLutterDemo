@@ -4,9 +4,12 @@ import 'package:flutter_demo/utils/render_box_util.dart';
 class RandomPositionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('自由位置弹框'),
+        ),
+        body: Container(
           child: Column(
             children: <Widget>[
               Builder(builder: (context) {
@@ -74,16 +77,22 @@ class MyPopupRoute<T> extends PopupRoute<T> {
   final Color barrierColor;
   final Duration transitionDuration;
   final double offset;
+
+
   @override
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pop();
       },
-      child: Container(
-        margin: EdgeInsets.only(top: offset),
-        color: Colors.red,
-        child: _ListWidget(),
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          height: 200.0,
+          margin: EdgeInsets.only(top: offset),
+          color: Colors.red,
+          child: _ListWidget(),
+        ),
       ),
     );
   }
