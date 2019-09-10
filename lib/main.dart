@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/AnimatedList/animated_list_page.dart';
 import 'package:flutter_demo/banner/banners.dart';
+import 'package:flutter_demo/book_animation/book_animation.dart';
 import 'package:flutter_demo/cache/cache_manager_page.dart';
 import 'package:flutter_demo/change_role_widget/anim_change_role.dart';
 import 'package:flutter_demo/cover_filter/cover_filter.dart';
@@ -105,6 +106,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: '句子分割', route: SplitSentencePage()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '翻书动画', route: BookAnimation()),
           ),
         ],
       ),
