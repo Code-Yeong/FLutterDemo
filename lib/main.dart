@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/AnimatedList/animated_list_page.dart';
+import 'package:flutter_demo/aop/test_aop.dart';
 import 'package:flutter_demo/banner/banners.dart';
 import 'package:flutter_demo/book_animation/book_animation.dart';
 import 'package:flutter_demo/cache/cache_manager_page.dart';
+import 'package:flutter_demo/change_page_gesture/test_page_1.dart';
 import 'package:flutter_demo/change_role_widget/anim_change_role.dart';
 import 'package:flutter_demo/cover_filter/cover_filter.dart';
 import 'package:flutter_demo/cross_fade/cross_fade_page.dart';
+import 'package:flutter_demo/custom_pageview/TestCustomPageView.dart';
 import 'package:flutter_demo/directionality/directionality_page.dart';
 import 'package:flutter_demo/gesture_dector2/gesture_detector.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
@@ -29,6 +32,7 @@ class MyApp extends StatelessWidget {
       showSemanticsDebugger: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        platform: TargetPlatform.iOS,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -109,6 +113,15 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: '翻书动画', route: BookAnimation()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '自定义PageView', route: TestCustomPageView()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '测试页面滑动', route: TestPage1()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '测试AOP', route: TestAopDemo()),
           ),
         ],
       ),
