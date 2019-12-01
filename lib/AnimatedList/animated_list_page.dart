@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/AnimatedList/item.dart';
 
 class AnimatedListPage extends StatefulWidget {
   @override
@@ -6,121 +9,58 @@ class AnimatedListPage extends StatefulWidget {
 }
 
 class _AnimatedListPageState extends State<AnimatedListPage> {
-  List<String> list = [];
+  List<ListItem> list = [];
   GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
 
   @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < 10; i++) {
-      list.add('Item $i');
-    }
-    anim2 = Tween(begin: 0, end: 1);
-  }
-
-  Tween<int> anim2;
-
-  @override
   Widget build(BuildContext context) {
-    print('build...');
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('AnimatedList'),
-      ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Container(
-              height: 50.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text('Add'),
-                    onPressed: () {
-                      list.insert(0, 'new');
-                      listKey.currentState.insertItem(0);
-                      setState(() {});
-                    },
-                  ),
-                  RaisedButton(
-                    child: Text('Del'),
-                    onPressed: () {
-                      if (list.length > 0) {
-                        listKey.currentState.removeItem(0, (context, animation) {
-                          return SizeTransition(
-                            sizeFactor: animation.drive(Tween(begin: 0, end: 1)),
-                            child: Container(
-                              width: double.infinity,
-                              height: 50.0,
-                              padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
-                              child: list.length > 0
-                                  ? Container(
-                                      color: Colors.cyanAccent,
-                                      child: Text(
-                                        '${list[0]}',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                  : Container(),
-                            ),
-                          );
-                        });
-                        list.removeAt(0);
-                        setState(() {});
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Container(
-                child: list.length > 0
-                    ? AnimatedList(
-                        key: listKey,
-                        initialItemCount: list.length,
-                        itemBuilder: (context, index, animation) {
-                          return SizeTransition(
-                            sizeFactor: animation.drive(Tween(begin: 0, end: 1)),
-                            child: ListItem(text: list[index]),
-                          );
-                        },
-                      )
-                    : Container(),
-              ),
-            ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('AnimatedList'),
         ),
+        body: Container(
+          child: AnimatedList(
+            key: listKey,
+            initialItemCount: list.length,
+            itemBuilder: (context, index, animation) {
+              return SizeTransition(
+                sizeFactor: animation.drive(Tween(begin: 0, end: 1)),
+                child: ListTile(
+                  leading: Text('${list[index].id}'),
+                  title: Text('${list[index].name}'),
+                  trailing: GestureDetector(
+                    onTap: () {
+                      deleteItemAt(index);
+                    },
+                    child: Text('删除'),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        floatingActionButton: GestureDetector(
+          onTap: () {
+            listKey.currentState.insertItem(list.length);
+            list.add(ListItem(id: generateId, name: '测试选项'));
+          },
+          child: Icon(Icons.add_circle, color: Colors.blue, size: 60.0),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
 
-  @override
-  void didUpdateWidget(AnimatedListPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print('update....');
+  deleteItemAt(int index) {
+    listKey.currentState.removeItem(index, (context, animation) {
+      return SizeTransition(
+        sizeFactor: animation.drive(Tween(begin: 0, end: 1)),
+        child: Container(width: double.infinity, height: 50.0, child: Container(color: Colors.white)),
+      );
+    });
+    list.removeAt(index);
   }
-}
 
-class ListItem extends StatelessWidget {
-  final String text;
-
-  ListItem({this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 50.0,
-      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 12.0),
-      child: Container(
-        color: Colors.cyanAccent,
-        child: Text(
-          '$text',
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
+  int get generateId => DateTime.now().millisecondsSinceEpoch;
 }
