@@ -9,39 +9,30 @@ class BannerPage extends BaseStatelessPage {
   @override
   Widget pageContent(BuildContext context) {
     return Container(
-      color: Colors.green,
+//      color: Colors.green,
       child: Column(
         children: <Widget>[
           Banner(
-            message: "Banner",
+            message: "Banner1",
             location: BannerLocation.topStart,
             child: Container(
-              color: Colors.red,
+              color: Colors.green,
             ),
           ),
           Banner(
-            message: "Banner",
+            message: "Banner2",
             location: BannerLocation.topEnd,
-            child: Container(
-              color: Colors.red,
-            ),
+            color: Colors.blue,
           ),
           Banner(
-            message: "Banner",
-            location: BannerLocation.topStart,
-            child: Container(
-              color: Colors.red,
-            ),
-          ),
-          Banner(
-            message: "Banner",
+            message: "Banner4",
             location: BannerLocation.bottomStart,
             child: Container(
               color: Colors.red,
             ),
           ),
           Banner(
-            message: "Banner",
+            message: "Banner5",
             location: BannerLocation.bottomEnd,
             child: Container(
               color: Colors.red,

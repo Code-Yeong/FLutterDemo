@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/AnimatedList/animated_list_page.dart';
+import 'package:flutter_demo/analyze_state/test_state.dart';
 import 'package:flutter_demo/aop/test_aop.dart';
 import 'package:flutter_demo/banner/banners.dart';
 import 'package:flutter_demo/book_animation/book_animation.dart';
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         platform: TargetPlatform.iOS,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+//      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
     );
   }
 }

@@ -42,7 +42,7 @@ class _AnimatedListPageState extends State<AnimatedListPage> {
         ),
         floatingActionButton: GestureDetector(
           onTap: () {
-            listKey.currentState.insertItem(list.length);
+            listKey.currentState.insertItem(0);
             list.add(ListItem(id: generateId, name: '测试选项'));
           },
           child: Icon(Icons.add_circle, color: Colors.blue, size: 60.0),

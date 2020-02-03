@@ -1,4 +1,3 @@
-import 'package:aspectd/aspect.dart';
 import 'package:flutter/material.dart';
 
 class TestAopDemo extends StatelessWidget {
@@ -19,7 +18,6 @@ class TestAopDemo extends StatelessWidget {
     );
   }
 
-  @Aspect()
   add(a, b){
     return a + b;
   }
