@@ -4,11 +4,13 @@ import 'package:flutter_demo/analyze_state/test_state.dart';
 import 'package:flutter_demo/aop/test_aop.dart';
 import 'package:flutter_demo/banner/banners.dart';
 import 'package:flutter_demo/book_animation/book_animation.dart';
+import 'package:flutter_demo/bottom_navigator/main_page.dart';
 import 'package:flutter_demo/cache/cache_manager_page.dart';
 import 'package:flutter_demo/change_page_gesture/test_page_1.dart';
 import 'package:flutter_demo/change_role_widget/anim_change_role.dart';
 import 'package:flutter_demo/cover_filter/cover_filter.dart';
 import 'package:flutter_demo/cross_fade/cross_fade_page.dart';
+import 'package:flutter_demo/custom_background/main.dart';
 import 'package:flutter_demo/custom_pageview/TestCustomPageView.dart';
 import 'package:flutter_demo/directionality/directionality_page.dart';
 import 'package:flutter_demo/gesture_dector2/gesture_detector.dart';
@@ -35,8 +37,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         platform: TargetPlatform.iOS,
       ),
-//      home: MyHomePage(title: 'Flutter Demo Home Page'),
-      home: MainPage(),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
+//      home: MainPage(),
     );
   }
 }
@@ -124,6 +126,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: '测试AOP', route: TestAopDemo()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '测试自定义边框', route: CustomDecorationPage()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: '底部导航栏性能测试', route: TestBottomNavigatorPage()),
           ),
         ],
       ),
