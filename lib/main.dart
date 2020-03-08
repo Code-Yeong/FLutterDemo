@@ -19,6 +19,7 @@ import 'package:flutter_demo/hearo_animation/SizeAnimation.dart';
 import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/method_channel/method_channel_page.dart';
+import 'package:flutter_demo/overlay/overlay_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
 import 'package:flutter_demo/shader_mask/shader_mask_page.dart';
 import 'package:flutter_demo/slider/slider_page.dart';
@@ -132,6 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: '底部导航栏性能测试', route: TestBottomNavigatorPage()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: 'Overlay', route: Slide()),
           ),
         ],
       ),
