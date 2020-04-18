@@ -17,6 +17,7 @@ import 'package:flutter_demo/gesture_dector2/gesture_detector.dart';
 import 'package:flutter_demo/gesture_detector/gesture_detector.dart';
 import 'package:flutter_demo/hearo_animation/SizeAnimation.dart';
 import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
+import 'package:flutter_demo/layout_builder/layout_builder_page%5D.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/overlay/overlay_page.dart';
@@ -136,6 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: 'Overlay', route: Slide()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: 'LayoutBuilder', route: LayoutBuilderPage()),
           ),
         ],
       ),
