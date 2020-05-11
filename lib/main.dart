@@ -22,6 +22,8 @@ import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
 import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/overlay/overlay_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
+import 'package:flutter_demo/scale_page/reference/transformations_demo.dart';
+import 'package:flutter_demo/scale_page/scale_page.dart';
 import 'package:flutter_demo/shader_mask/shader_mask_page.dart';
 import 'package:flutter_demo/slider/slider_page.dart';
 import 'package:flutter_demo/split_sentence/main_page.dart';
@@ -140,6 +142,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             child: _ChoiceEntry(text: 'LayoutBuilder', route: LayoutBuilderPage()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: 'ScalePage', route: ScalePage()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: 'TransformationsDemo', route: TransformationsDemo()),
           ),
         ],
       ),
