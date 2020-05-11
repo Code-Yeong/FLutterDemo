@@ -138,6 +138,9 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     Text('lunch. ', key: key[13], style: TextStyle(color: Colors.red)),
   ];
 
+  Offset translate = Offset.zero;
+  double scaled = 1;
+
   @override
   Widget build(BuildContext context) {
     final painter = BoardPainter(
@@ -162,6 +165,12 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
             final visibleSize = Size(size.width * 3, size.height * 2);
 //            final visibleSize = Size(size.width, size.height);
             return GestureTransformable(
+              onTranslate: (offset){
+                translate = offset;
+              },
+              onScale: (scale){
+                scaled = scale;
+              },
               reset: _reset,
               onResetEnd: () {
                 setState(() {
@@ -177,26 +186,16 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                     color: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: Center(
-//                      child: Text(
-//                        'Hello friends! Kitty is writing code in his room, and forgot to eat lunch',
-//                        style: TextStyle(fontSize: 20),
-//                      ),
-//                      child: Text.rich(TextSpan(children: _textList)),
                       child: Wrap(children: _textList),
                     ),
                   ),
                   ClipPath(
                       clipBehavior: Clip.antiAlias,
                       clipper: RectClipper(
-                          posotion: position,
-                          ratio: (_animationController.value * _kAudioDuration - position * avgTime) / avgTime,
-//                              curRect: key[position].currentContext != null ?getRect(key[position].currentContext): Rect.zero),
-                          cxt: key[position].currentContext),
-//                      child: Text(
-//                        'Hello friends! Kitty is writing code in his room, and forgot to eat lunch',
-//                        style: TextStyle(fontSize: 20, color: Colors.red),
-//                      ),
-//                          child: Text.rich(TextSpan(children: _textList), style: TextStyle(color: Colors.red),),
+                        posotion: position,
+                        ratio: (_animationController.value * _kAudioDuration - position * avgTime) / avgTime,
+                        cxt: key[position].currentContext,
+                      ),
                       child: Container(
                         margin: EdgeInsets.only(top: 0.0),
                         color: Colors.transparent,
@@ -335,7 +334,9 @@ class RectClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     return true;
   }
+
   double h = 26.0;
+
   @override
   Path getClip(Size size) {
     Path mPath = Path();
@@ -344,7 +345,7 @@ class RectClipper extends CustomClipper<Path> {
       return mPath;
     }
     curRect = getRect(cxt);
-    if(posotion == 11) {
+    if (posotion == 11) {
       print(ratio);
     }
     mPath.lineTo(0, 0);

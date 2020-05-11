@@ -73,6 +73,8 @@ class GestureTransformable extends StatefulWidget {
     this.onScaleStart,
     this.onScaleUpdate,
     this.onScaleEnd,
+    this.onScale,
+    this.onTranslate,
   })  : assert(child != null),
         assert(size != null),
         assert(minScale != null),
@@ -125,6 +127,10 @@ class GestureTransformable extends StatefulWidget {
   final Offset initialTranslation;
   final double initialScale;
   final double initialRotation;
+
+  //self define
+  final ValueChanged<Offset> onTranslate;
+  final ValueChanged<double> onScale;
 
   @override
   _GestureTransformableState createState() => _GestureTransformableState();
@@ -505,6 +511,9 @@ class _GestureTransformableState extends State<GestureTransformable>
         );
         _transform =
             matrixTranslate(_transform, focalPointSceneNext - focalPointScene);
+        if(widget.onScale != null){
+          widget.onScale(scaleChange);
+        }
       } else if (gestureType == _GestureType.rotate && details.rotation != 0) {
         final desiredRotation = _rotationStart + details.rotation;
         _transform = matrixRotate(
@@ -516,6 +525,9 @@ class _GestureTransformableState extends State<GestureTransformable>
         final translationChange = focalPointScene - _translateFromScene;
         _transform = matrixTranslate(_transform, translationChange);
         _translateFromScene = fromViewport(details.focalPoint, _transform);
+        if(widget.onTranslate != null){
+          widget.onTranslate(translationChange);
+        }
       }
     });
   }
