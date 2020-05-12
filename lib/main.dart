@@ -143,9 +143,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             child: _ChoiceEntry(text: 'LayoutBuilder', route: LayoutBuilderPage()),
           ),
-          Container(
-            child: _ChoiceEntry(text: 'ScalePage', route: ScalePage()),
-          ),
+//          Container(
+//            child: _ChoiceEntry(text: 'ScalePage', route: ScalePage()),
+//          ),
           Container(
             child: _ChoiceEntry(text: 'TransformationsDemo', route: TransformationsDemo()),
           ),

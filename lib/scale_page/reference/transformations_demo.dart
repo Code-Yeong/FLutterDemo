@@ -18,6 +18,9 @@ class TransformationsDemo extends StatefulWidget {
   _TransformationsDemoState createState() => _TransformationsDemoState();
 }
 
+GlobalKey conKey = GlobalKey();
+int gestureType;
+
 class _TransformationsDemoState extends State<TransformationsDemo> with SingleTickerProviderStateMixin {
   // The radius of a hexagon tile in pixels.
   static const _kHexagonRadius = 32.0;
@@ -40,6 +43,14 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     hexagonRadius: _kHexagonRadius,
     hexagonMargin: _kHexagonMargin,
   );
+
+
+  @override
+  void dispose() {
+    _animationController.stop();
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -80,7 +91,20 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     TextSpan(text: 'his '),
     TextSpan(text: 'room, '),
     TextSpan(text: 'and '),
-//    TextSpan(text: 'and ', style: TextStyle(color: Colors.red)),
+    TextSpan(text: 'forgot '),
+    TextSpan(text: 'to '),
+    TextSpan(text: 'eat '),
+    TextSpan(text: 'lunch. '),
+    TextSpan(text: 'Hello '),
+    TextSpan(text: 'friends, '),
+    TextSpan(text: 'Kitty '),
+    TextSpan(text: 'is '),
+    TextSpan(text: 'writing '),
+    TextSpan(text: 'code '),
+    TextSpan(text: 'in '),
+    TextSpan(text: 'his '),
+    TextSpan(text: 'room, '),
+    TextSpan(text: 'and '),
     TextSpan(text: 'forgot '),
     TextSpan(text: 'to '),
     TextSpan(text: 'eat '),
@@ -88,6 +112,20 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
   ];
 
   static List<GlobalKey> key = [
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
+    new GlobalKey(),
     new GlobalKey(),
     new GlobalKey(),
     new GlobalKey(),
@@ -119,6 +157,20 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     Text('to '),
     Text('eat '),
     Text('lunch. '),
+    Text('Hello '),
+    Text('friends, '),
+    Text('Kitty '),
+    Text('is '),
+    Text('writing '),
+    Text('code '),
+    Text('in '),
+    Text('his '),
+    Text('room, '),
+    Text('and '),
+    Text('forgot '),
+    Text('to '),
+    Text('eat '),
+    Text('lunch. '),
   ];
 
   static List<Text> _textList2 = [
@@ -136,6 +188,20 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     Text('to ', key: key[11], style: TextStyle(color: Colors.red)),
     Text('eat ', key: key[12], style: TextStyle(color: Colors.red)),
     Text('lunch. ', key: key[13], style: TextStyle(color: Colors.red)),
+    Text('Hello ', key: key[14], style: TextStyle(color: Colors.red)),
+    Text('friends, ', key: key[15], style: TextStyle(color: Colors.red)),
+    Text('Kitty ', key: key[16], style: TextStyle(color: Colors.red)),
+    Text('is ', key: key[17], style: TextStyle(color: Colors.red)),
+    Text('writing ', key: key[18], style: TextStyle(color: Colors.red)),
+    Text('code ', key: key[19], style: TextStyle(color: Colors.red)),
+    Text('in ', key: key[20], style: TextStyle(color: Colors.red)),
+    Text('his ', key: key[21], style: TextStyle(color: Colors.red)),
+    Text('room, ', key: key[22], style: TextStyle(color: Colors.red)),
+    Text('and ', key: key[23], style: TextStyle(color: Colors.red)),
+    Text('forgot ', key: key[24], style: TextStyle(color: Colors.red)),
+    Text('to ', key: key[25], style: TextStyle(color: Colors.red)),
+    Text('eat ', key: key[26], style: TextStyle(color: Colors.red)),
+    Text('lunch. ', key: key[27], style: TextStyle(color: Colors.red)),
   ];
 
   Offset translate = Offset.zero;
@@ -151,10 +217,10 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     // the GestureTransformable parent widget.
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('demo2dTransformationsTitle'),
-      ),
+//      appBar: AppBar(
+//        automaticallyImplyLeading: false,
+//        title: Text('demo2dTransformationsTitle'),
+//      ),
       body: Container(
         color: backgroundColor,
         child: LayoutBuilder(
@@ -165,11 +231,12 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
             final visibleSize = Size(size.width * 3, size.height * 2);
 //            final visibleSize = Size(size.width, size.height);
             return GestureTransformable(
-              onTranslate: (offset){
-                translate = offset;
+              conKey: conKey,
+              onTranslate: (offset) {
+                gestureType = offset;
               },
-              onScale: (scale){
-                scaled = scale;
+              onScale: (scale) {
+                gestureType = scale;
               },
               reset: _reset,
               onResetEnd: () {
@@ -186,7 +253,14 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                     color: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: Center(
-                      child: Wrap(children: _textList),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Wrap(children: _textList.sublist(0, 14)),
+                          Container(height: 20.0, width: double.infinity),
+                          Wrap(children: _textList.sublist(14, 27)),
+                        ],
+                      ),
                     ),
                   ),
                   ClipPath(
@@ -195,14 +269,23 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                         posotion: position,
                         ratio: (_animationController.value * _kAudioDuration - position * avgTime) / avgTime,
                         cxt: key[position].currentContext,
+                        translated: translate,
+                        scaled: scaled,
                       ),
                       child: Container(
                         margin: EdgeInsets.only(top: 0.0),
-                        color: Colors.transparent,
-//                        color: Colors.blue.withOpacity(0.2),
+//                        color: Colors.transparent,
+                        color: Colors.blue.withOpacity(0.2),
                         padding: EdgeInsets.symmetric(horizontal: 20.0),
                         child: Center(
-                          child: Wrap(children: _textList2),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Wrap(children: _textList2.sublist(0, 14)),
+                              Container(height: 20.0, width: double.infinity),
+                              Wrap(children: _textList2.sublist(14, 27)),
+                            ],
+                          ),
                         ),
                       )),
                 ],
@@ -327,8 +410,10 @@ class RectClipper extends CustomClipper<Path> {
   Rect curRect;
   final BuildContext cxt;
   final int posotion;
+  final double scaled;
+  final Offset translated;
 
-  RectClipper({this.ratio = 1, this.curRect, this.cxt, this.posotion});
+  RectClipper({this.ratio = 1, this.curRect, this.cxt, this.posotion, this.scaled, this.translated});
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) {
@@ -336,6 +421,7 @@ class RectClipper extends CustomClipper<Path> {
   }
 
   double h = 26.0;
+  Rect conRect = Rect.zero;
 
   @override
   Path getClip(Size size) {
@@ -346,16 +432,21 @@ class RectClipper extends CustomClipper<Path> {
     }
     curRect = getRect(cxt);
     if (posotion == 11) {
-      print(ratio);
+//      print(ratio);
     }
-    mPath.lineTo(0, 0);
-    mPath.lineTo(size.width, 0);
-    mPath.lineTo(size.width, curRect.top - kToolbarHeight - h);
-    mPath.lineTo(curRect.left + curRect.width * ratio, curRect.top - kToolbarHeight - h);
-    mPath.lineTo(curRect.left + curRect.width * ratio, curRect.bottom - kToolbarHeight - h);
-    mPath.lineTo(0, curRect.bottom - kToolbarHeight - h);
+    if (conKey.currentContext != null) {
+      conRect = getRect(conKey.currentContext);
+//      print(conRect);
+    }
+    double kToolbarHeight = -26;
+    Offset shift = Offset(-conRect.left, -conRect.top); //消除位移影响
+    mPath.lineTo(0 + shift.dx, 0 + shift.dy);
+    mPath.lineTo(size.width + shift.dx, 0 + shift.dy);
+    mPath.lineTo(size.width + shift.dx, curRect.top - kToolbarHeight - h + shift.dy);
+    mPath.lineTo(curRect.left + curRect.width * ratio + shift.dx, curRect.top - kToolbarHeight - h + shift.dy);
+    mPath.lineTo(curRect.left + curRect.width * ratio + shift.dx, curRect.bottom - kToolbarHeight - h + shift.dy);
+    mPath.lineTo(0 + shift.dx, curRect.bottom - kToolbarHeight - h + shift.dy);
     mPath.close();
-//    print('path = ${mPath.getBounds()}');
     return mPath;
   }
 

@@ -16,7 +16,7 @@ import 'transformations_demo_inertial_motion.dart';
 @immutable
 class GestureTransformable extends StatefulWidget {
   const GestureTransformable({
-    Key key,
+    this.conKey,
     // The child to perform the transformations on.
     @required this.child,
     // The desired visible size of the widget and the area that is receptive to
@@ -75,6 +75,7 @@ class GestureTransformable extends StatefulWidget {
     this.onScaleEnd,
     this.onScale,
     this.onTranslate,
+    this.gestureType,
   })  : assert(child != null),
         assert(size != null),
         assert(minScale != null),
@@ -86,8 +87,8 @@ class GestureTransformable extends StatefulWidget {
         assert(
           !reset || onResetEnd != null,
           'Must implement onResetEnd to use reset.',
-        ),
-        super(key: key);
+        );
+//        super(key: key);
 
   final Widget child;
   final Size size;
@@ -127,10 +128,12 @@ class GestureTransformable extends StatefulWidget {
   final Offset initialTranslation;
   final double initialScale;
   final double initialRotation;
+  final Key conKey;
 
   //self define
-  final ValueChanged<Offset> onTranslate;
-  final ValueChanged<double> onScale;
+  final ValueChanged<int> onTranslate;
+  final ValueChanged<int> onScale;
+  final int gestureType;
 
   @override
   _GestureTransformableState createState() => _GestureTransformableState();
@@ -201,6 +204,7 @@ class _GestureTransformableState extends State<GestureTransformable>
   void initState() {
     super.initState();
     _boundaryRect = widget.boundaryRect ?? Offset.zero & widget.size;
+//    print('origin boundary = $_boundaryRect');
     _transform = _initialTransform;
     _controller = AnimationController(
       vsync: this,
@@ -336,6 +340,7 @@ class _GestureTransformableState extends State<GestureTransformable>
         child: Transform(
           transform: _transform,
           child: Container(
+            key: widget.conKey,
             child: widget.child,
             height: widget.size.height,
             width: widget.size.width,
@@ -353,8 +358,10 @@ class _GestureTransformableState extends State<GestureTransformable>
     }
 
     // Clamp translation so the viewport remains inside _boundaryRect.
-    final scale = _transform.getMaxScaleOnAxis();
-    final scaledSize = widget.size / scale;
+    final scale = _transform.getMaxScaleOnAxis(); //倍数
+    final scaledSize = widget.size / scale; //
+//    print('scale = $scale, scaledSize = $scaledSize');
+    // 可见部分
     final viewportBoundaries = Rect.fromLTRB(
       _boundaryRect.left,
       _boundaryRect.top,
@@ -512,7 +519,7 @@ class _GestureTransformableState extends State<GestureTransformable>
         _transform =
             matrixTranslate(_transform, focalPointSceneNext - focalPointScene);
         if(widget.onScale != null){
-          widget.onScale(scaleChange);
+          widget.onScale(gestureType.index);
         }
       } else if (gestureType == _GestureType.rotate && details.rotation != 0) {
         final desiredRotation = _rotationStart + details.rotation;
@@ -526,7 +533,7 @@ class _GestureTransformableState extends State<GestureTransformable>
         _transform = matrixTranslate(_transform, translationChange);
         _translateFromScene = fromViewport(details.focalPoint, _transform);
         if(widget.onTranslate != null){
-          widget.onTranslate(translationChange);
+          widget.onTranslate(gestureType.index);
         }
       }
     });
