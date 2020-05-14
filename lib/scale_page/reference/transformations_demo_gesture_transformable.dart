@@ -88,6 +88,7 @@ class GestureTransformable extends StatefulWidget {
           !reset || onResetEnd != null,
           'Must implement onResetEnd to use reset.',
         );
+
 //        super(key: key);
 
   final Widget child;
@@ -343,7 +344,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
   // Return a new matrix representing the given matrix after applying the given
   // translation.
   Matrix4 matrixTranslate(Matrix4 matrix, Offset translation) {
-    if (widget.disableTranslation || translation == Offset.zero || gestureType != _GestureType.translate) {
+    if (widget.disableTranslation || translation == Offset.zero) {
       return matrix;
     }
 
@@ -364,7 +365,6 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
       _boundaryRect.right,
       _boundaryRect.bottom,
     );
-//    print('boundary = $viewportBoundaries, scale = $scale');
     // Translation is reversed (a positive translation moves the scene to the
     // right, viewport to the left).
     final translationBoundaries = Rect.fromLTRB(
@@ -373,36 +373,37 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
       -scale * viewportBoundaries.left,
       -scale * viewportBoundaries.top,
     );
-//    print('boundary = $translationBoundaries');
+    print('ttttt = $translation');
     final nextMatrix = matrix.clone()
       ..translate(
         translation.dx,
         translation.dy,
       );
-    Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), nextMatrix);
-
-//    if (gestureType == _GestureType.translate) {
-      if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
-        return matrix;
-      }
-//    }
-//    if (gestureType == _GestureType.scale) {
-//      if (br.dx < _boundaryRect.right || br.dy < _boundaryRect.bottom) {
-//        return matrix;
-//      }
-//    }
     final nextTranslationVector = nextMatrix.getTranslation();
     final nextTranslation = Offset(
       nextTranslationVector.x,
       nextTranslationVector.y,
     );
-    bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
-    if (!inBoundaries) {
-      // TODO(justinmc): Instead of canceling translation when it goes out of
-      // bounds, stop translation at boundary.
-      return matrix;
+    print(nextTranslation);
+    if(gestureType == _GestureType.translate) {
+      bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
+      if (!inBoundaries) {
+        // TODO(justinmc): Instead of canceling translation when it goes out of
+        // bounds, stop translation at boundary.
+        return matrix;
+      }
+//    if(gestureType == _GestureType.scale) {
+//      if (nextTranslation.dx < _boundaryRect.left || nextTranslation.dy < _boundaryRect.top) {
+//        return matrix;
+//      }
+//    }
+      Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), nextMatrix);
+      if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
+        return matrix;
+      }
+      print('translate, offset = $br, type = $gestureType');
     }
-    print('translate, offset = $br, type = $gestureType');
+print(1);
     return nextMatrix;
   }
 
@@ -432,10 +433,10 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
       widget.maxScale,
     ) as double;
     final clampedScale = clampedTotalScale / currentScale;
-    if(clampedTotalScale < 1){
-      return matrix;
-    }
-    print('clampedScale = $clampedScale, clampedTotalScale = $clampedTotalScale, currentScale = $currentScale, scale = $scale');
+//    if (clampedTotalScale < ) {
+//      return matrix;
+//    }
+//    print('clampedScale = $clampedScale, clampedTotalScale = $clampedTotalScale, currentScale = $currentScale, scale = $scale');
     return matrix..scale(clampedScale);
   }
 
@@ -511,7 +512,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
         // previous call to _onScaleUpdate.
         final desiredScale = _scaleStart * details.scale;
         final scaleChange = desiredScale / scale;
-        print('scalechange = $scaleChange');
+//        print('before scale = ${_transform.getMaxScaleOnAxis()}');
         _transform = matrixScale(_transform, scaleChange);
         Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), _transform);
 
@@ -520,24 +521,17 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
           _animateResetInitialize();
         }
         scale = _transform.getMaxScaleOnAxis();
-        print('scale = $scale');
+//        print('after scale = $scale');
         // While scaling, translate such that the user's two fingers stay on the
         // same places in the scene. That means that the focal point of the
         // scale should be on the same place in the scene before and after the
         // scale.
-        final focalPointSceneNext = fromViewport(
-          details.focalPoint,
-          _transform,
-        );
-        _transform =
-            matrixTranslate(_transform, focalPointSceneNext - focalPointScene);
-        if(widget.onScale != null){
-          widget.onScale(gestureType.index);
-        }
+        final focalPointSceneNext = fromViewport(details.focalPoint, _transform);
+//        print('focalPointSceneNext = $focalPointSceneNext, focalPointScene = $focalPointScene, value = ${focalPointSceneNext - focalPointScene}');
+        _transform = matrixTranslate(_transform, focalPointSceneNext - focalPointScene);
       } else if (gestureType == _GestureType.rotate && details.rotation != 0) {
         final desiredRotation = _rotationStart + details.rotation;
-        _transform = matrixRotate(
-            _transform, _currentRotation - desiredRotation, details.focalPoint);
+        _transform = matrixRotate(_transform, _currentRotation - desiredRotation, details.focalPoint);
         _currentRotation = desiredRotation;
       } else if (_translateFromScene != null && details.scale == 1) {
         // Translate so that the same point in the scene is underneath the
@@ -545,7 +539,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
         final translationChange = focalPointScene - _translateFromScene;
         _transform = matrixTranslate(_transform, translationChange);
         _translateFromScene = fromViewport(details.focalPoint, _transform);
-        if(widget.onTranslate != null){
+        if (widget.onTranslate != null) {
           widget.onTranslate(gestureType.index);
         }
       }
