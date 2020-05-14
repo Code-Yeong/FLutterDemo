@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/analyze_state/test_state.dart';
 import 'package:flutter_demo/utils/render_box_util.dart';
 import 'transformations_demo_board.dart';
 import 'transformations_demo_edit_board_point.dart';
@@ -22,15 +21,6 @@ GlobalKey conKey = GlobalKey();
 int gestureType;
 
 class _TransformationsDemoState extends State<TransformationsDemo> with SingleTickerProviderStateMixin {
-  // The radius of a hexagon tile in pixels.
-  static const _kHexagonRadius = 32.0;
-
-  // The margin between hexagons.
-  static const _kHexagonMargin = 1.0;
-
-  // The radius of the entire board in hexagons, not including the center.
-  static const _kBoardRadius = 12;
-
   // 播放时长, 秒
   static const _kAudioDuration = 10;
 
@@ -38,12 +28,6 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
   Animation<double> _animation;
 
   bool _reset = false;
-  Board _board = Board(
-    boardRadius: _kBoardRadius,
-    hexagonRadius: _kHexagonRadius,
-    hexagonMargin: _kHexagonMargin,
-  );
-
 
   @override
   void dispose() {
@@ -60,7 +44,6 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     _animationController = new AnimationController(vsync: this, duration: Duration(seconds: _kAudioDuration));
     _animationController.addListener(() {
       setState(() {
-//        print('val = ${_animationController.value * _kAudioDuration}, avg = $avgTime');
         position = (_animationController.value * _kAudioDuration / avgTime).floor();
         if (position >= _textList.length) {
           position--;
@@ -209,27 +192,15 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    final painter = BoardPainter(
-      board: _board,
-    );
-
-    // The scene is drawn by a CustomPaint, but user interaction is handled by
-    // the GestureTransformable parent widget.
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-//      appBar: AppBar(
-//        automaticallyImplyLeading: false,
-//        title: Text('demo2dTransformationsTitle'),
-//      ),
       body: Container(
         color: backgroundColor,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Draw the scene as big as is available, but allow the user to
-            // translate beyond that to a visibleSize that's a bit bigger.
             final size = Size(constraints.maxWidth, constraints.maxHeight);
-            final visibleSize = Size(size.width * 3, size.height * 2);
-//            final visibleSize = Size(size.width, size.height);
+//            final visibleSize = Size(size.width * 3, size.height * 2);
+            final visibleSize = Size(size.width, size.height);
             return GestureTransformable(
               conKey: conKey,
               onTranslate: (offset) {
@@ -244,9 +215,6 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                   _reset = false;
                 });
               },
-//              child: CustomPaint(
-//                painter: painter,
-//              ),
               child: Stack(
                 children: <Widget>[
                   Container(
@@ -266,7 +234,7 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                   ClipPath(
                       clipBehavior: Clip.antiAlias,
                       clipper: RectClipper(
-                        posotion: position,
+                        position: position,
                         ratio: (_animationController.value * _kAudioDuration - position * avgTime) / avgTime,
                         cxt: key[position].currentContext,
                         translated: translate,
@@ -274,7 +242,6 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                       ),
                       child: Container(
                         margin: EdgeInsets.only(top: 0.0),
-//                        color: Colors.transparent,
                         color: Colors.blue.withOpacity(0.2),
                         padding: EdgeInsets.symmetric(horizontal: 20.0),
                         child: Center(
@@ -290,25 +257,26 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
                       )),
                 ],
               ),
+//              boundaryRect: Rect.fromLTWH(
+//                -visibleSize.width / 2,
+//                -visibleSize.height / 2,
+//                visibleSize.width,
+//                visibleSize.height,
+//              ),
               boundaryRect: Rect.fromLTWH(
-                -visibleSize.width / 2,
-                -visibleSize.height / 2,
+                0,
+                0,
                 visibleSize.width,
                 visibleSize.height,
               ),
-              // Center the board in the middle of the screen. It's drawn centered
-              // at the origin, which is the top left corner of the
-              // GestureTransformable.
-//              initialTranslation: Offset(size.width / 2, size.height / 2),
               initialTranslation: Offset(0, 0),
-              onTapUp: _onTapUp,
               size: size,
               disableRotation: true,
             );
           },
         ),
       ),
-      persistentFooterButtons: [resetButton, editButton, startPlay],
+      persistentFooterButtons: [resetButton, startPlay],
     );
   }
 
@@ -325,37 +293,6 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
     );
   }
 
-  IconButton get editButton {
-    return IconButton(
-      onPressed: () {
-        if (_board.selected == null) {
-          return;
-        }
-        showModalBottomSheet<Widget>(
-            context: context,
-            builder: (context) {
-              return Container(
-                width: double.infinity,
-                height: 150,
-                padding: const EdgeInsets.all(12),
-                child: EditBoardPoint(
-                  boardPoint: _board.selected,
-                  onColorSelection: (color) {
-                    setState(() {
-                      _board = _board.copyWithBoardPointColor(_board.selected, color);
-                      Navigator.pop(context);
-                    });
-                  },
-                ),
-              );
-            });
-      },
-      tooltip: 'edit',
-      color: Theme.of(context).colorScheme.surface,
-      icon: const Icon(Icons.edit),
-    );
-  }
-
   IconButton get startPlay {
     return IconButton(
       icon: const Icon(Icons.play_arrow),
@@ -366,18 +303,8 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
       },
     );
   }
-
-  void _onTapUp(TapUpDetails details) {
-    final scenePoint = details.globalPosition;
-    final boardPoint = _board.pointToBoardPoint(scenePoint);
-    setState(() {
-      _board = _board.copyWithSelected(boardPoint);
-    });
-  }
 }
 
-// CustomPainter is what is passed to CustomPaint and actually draws the scene
-// when its `paint` method is called.
 class BoardPainter extends CustomPainter {
   const BoardPainter({
     this.board,
@@ -409,11 +336,11 @@ class RectClipper extends CustomClipper<Path> {
   final double ratio;
   Rect curRect;
   final BuildContext cxt;
-  final int posotion;
+  final int position;
   final double scaled;
   final Offset translated;
 
-  RectClipper({this.ratio = 1, this.curRect, this.cxt, this.posotion, this.scaled, this.translated});
+  RectClipper({this.ratio = 1, this.curRect, this.cxt, this.position, this.scaled, this.translated});
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) {
@@ -421,6 +348,7 @@ class RectClipper extends CustomClipper<Path> {
   }
 
   double h = 26.0;
+  double kToolbarHeight = -26;
   Rect conRect = Rect.zero;
 
   @override
@@ -431,14 +359,9 @@ class RectClipper extends CustomClipper<Path> {
       return mPath;
     }
     curRect = getRect(cxt);
-    if (posotion == 11) {
-//      print(ratio);
-    }
     if (conKey.currentContext != null) {
       conRect = getRect(conKey.currentContext);
-//      print(conRect);
     }
-    double kToolbarHeight = -26;
     Offset shift = Offset(-conRect.left, -conRect.top); //消除位移影响
     mPath.lineTo(0 + shift.dx, 0 + shift.dy);
     mPath.lineTo(size.width + shift.dx, 0 + shift.dy);
@@ -449,21 +372,6 @@ class RectClipper extends CustomClipper<Path> {
     mPath.close();
     return mPath;
   }
-
-//  @override
-//  Rect getClip(Size size) {
-//    Rect rect = Rect.fromLTWH(0, 0, size.width * ratio, size.height);
-//    Rect.
-//    print(rect.width * ratio);
-//    print(rect.height);
-//    return rect;
-//  }
-//
-//  @override
-//  bool shouldReclip(CustomClipper<Rect> oldClipper) {
-//    return true;
-//  }
-
 }
 
 // END

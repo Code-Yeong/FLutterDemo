@@ -148,12 +148,12 @@ enum _GestureType {
 }
 
 // This is public only for access from a unit test.
-class _GestureTransformableState extends State<GestureTransformable>
-    with TickerProviderStateMixin {
+class _GestureTransformableState extends State<GestureTransformable> with TickerProviderStateMixin {
   Animation<Offset> _animation;
   AnimationController _controller;
   Animation<Matrix4> _animationReset;
   AnimationController _controllerReset;
+
   // The translation that will be applied to the scene (not viewport).
   // A positive x offset moves the scene right, viewport left.
   // A positive y offset moves the scene down, viewport up.
@@ -232,21 +232,20 @@ class _GestureTransformableState extends State<GestureTransformable>
     // A GestureDetector allows the detection of panning and zooming gestures on
     // its child, which is the CustomPaint.
     return GestureDetector(
-      behavior: HitTestBehavior.opaque, // Necessary when translating off screen
+      behavior: HitTestBehavior.opaque,
+      // Necessary when translating off screen
       onTapDown: widget.onTapDown == null
           ? null
           : (details) {
               widget.onTapDown(TapDownDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onTapUp: widget.onTapUp == null
           ? null
           : (details) {
               widget.onTapUp(TapUpDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onTap: widget.onTap,
@@ -258,24 +257,21 @@ class _GestureTransformableState extends State<GestureTransformable>
           ? null
           : (details) {
               widget.onVerticalDragDown(DragDownDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onVerticalDragStart: widget.onVerticalDragStart == null
           ? null
           : (details) {
               widget.onVerticalDragStart(DragStartDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onVerticalDragUpdate: widget.onVerticalDragUpdate == null
           ? null
           : (details) {
               widget.onVerticalDragUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onVerticalDragEnd: widget.onVerticalDragEnd,
@@ -284,24 +280,21 @@ class _GestureTransformableState extends State<GestureTransformable>
           ? null
           : (details) {
               widget.onHorizontalDragDown(DragDownDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onHorizontalDragStart: widget.onHorizontalDragStart == null
           ? null
           : (details) {
               widget.onHorizontalDragStart(DragStartDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onHorizontalDragUpdate: widget.onHorizontalDragUpdate == null
           ? null
           : (details) {
               widget.onHorizontalDragUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onHorizontalDragEnd: widget.onHorizontalDragEnd,
@@ -310,24 +303,21 @@ class _GestureTransformableState extends State<GestureTransformable>
           ? null
           : (details) {
               widget.onPanDown(DragDownDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onPanStart: widget.onPanStart == null
           ? null
           : (details) {
               widget.onPanStart(DragStartDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onPanUpdate: widget.onPanUpdate == null
           ? null
           : (details) {
               widget.onPanUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(
-                    details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
               ));
             },
       onPanEnd: widget.onPanEnd,
@@ -353,21 +343,28 @@ class _GestureTransformableState extends State<GestureTransformable>
   // Return a new matrix representing the given matrix after applying the given
   // translation.
   Matrix4 matrixTranslate(Matrix4 matrix, Offset translation) {
-    if (widget.disableTranslation || translation == Offset.zero) {
+    if (widget.disableTranslation || translation == Offset.zero || gestureType != _GestureType.translate) {
       return matrix;
     }
 
     // Clamp translation so the viewport remains inside _boundaryRect.
     final scale = _transform.getMaxScaleOnAxis(); //倍数
-    final scaledSize = widget.size / scale; //
+//    final scaledSize = widget.size / scale; //
 //    print('scale = $scale, scaledSize = $scaledSize');
     // 可见部分
+//    final viewportBoundaries = Rect.fromLTRB(
+//      _boundaryRect.left,
+//      _boundaryRect.top,
+//      _boundaryRect.right - scaledSize.width,
+//      _boundaryRect.bottom - scaledSize.height,
+//    );
     final viewportBoundaries = Rect.fromLTRB(
       _boundaryRect.left,
       _boundaryRect.top,
-      _boundaryRect.right - scaledSize.width,
-      _boundaryRect.bottom - scaledSize.height,
+      _boundaryRect.right,
+      _boundaryRect.bottom,
     );
+//    print('boundary = $viewportBoundaries, scale = $scale');
     // Translation is reversed (a positive translation moves the scene to the
     // right, viewport to the left).
     final translationBoundaries = Rect.fromLTRB(
@@ -376,25 +373,36 @@ class _GestureTransformableState extends State<GestureTransformable>
       -scale * viewportBoundaries.left,
       -scale * viewportBoundaries.top,
     );
+//    print('boundary = $translationBoundaries');
     final nextMatrix = matrix.clone()
       ..translate(
         translation.dx,
         translation.dy,
       );
+    Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), nextMatrix);
+
+//    if (gestureType == _GestureType.translate) {
+      if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
+        return matrix;
+      }
+//    }
+//    if (gestureType == _GestureType.scale) {
+//      if (br.dx < _boundaryRect.right || br.dy < _boundaryRect.bottom) {
+//        return matrix;
+//      }
+//    }
     final nextTranslationVector = nextMatrix.getTranslation();
     final nextTranslation = Offset(
       nextTranslationVector.x,
       nextTranslationVector.y,
     );
-    final inBoundaries = translationBoundaries.contains(
-      Offset(nextTranslation.dx, nextTranslation.dy),
-    );
+    bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
     if (!inBoundaries) {
       // TODO(justinmc): Instead of canceling translation when it goes out of
       // bounds, stop translation at boundary.
       return matrix;
     }
-
+    print('translate, offset = $br, type = $gestureType');
     return nextMatrix;
   }
 
@@ -407,19 +415,13 @@ class _GestureTransformableState extends State<GestureTransformable>
     assert(scale != 0);
 
     // Don't allow a scale that moves the viewport outside of _boundaryRect.
-    final tl = fromViewport(const Offset(0, 0), _transform);
-    final tr = fromViewport(Offset(widget.size.width, 0), _transform);
-    final bl = fromViewport(Offset(0, widget.size.height), _transform);
-    final br = fromViewport(
-      Offset(widget.size.width, widget.size.height),
-      _transform,
-    );
-    if (!_boundaryRect.contains(tl) ||
-        !_boundaryRect.contains(tr) ||
-        !_boundaryRect.contains(bl) ||
-        !_boundaryRect.contains(br)) {
-      return matrix;
-    }
+//    final tl = fromViewport(const Offset(0, 0), _transform);
+//    final tr = fromViewport(Offset(widget.size.width, 0), _transform);
+//    final bl = fromViewport(Offset(0, widget.size.height), _transform);
+//    final br = fromViewport(Offset(widget.size.width, widget.size.height), _transform);
+//    if (!_boundaryRect.contains(tl) || !_boundaryRect.contains(tr) || !_boundaryRect.contains(bl) || !_boundaryRect.contains(br)) {
+//      return matrix;
+//    }
 
     // Don't allow a scale that results in an overall scale beyond min/max
     // scale.
@@ -430,6 +432,10 @@ class _GestureTransformableState extends State<GestureTransformable>
       widget.maxScale,
     ) as double;
     final clampedScale = clampedTotalScale / currentScale;
+    if(clampedTotalScale < 1){
+      return matrix;
+    }
+    print('clampedScale = $clampedScale, clampedTotalScale = $clampedTotalScale, currentScale = $currentScale, scale = $scale');
     return matrix..scale(clampedScale);
   }
 
@@ -505,9 +511,16 @@ class _GestureTransformableState extends State<GestureTransformable>
         // previous call to _onScaleUpdate.
         final desiredScale = _scaleStart * details.scale;
         final scaleChange = desiredScale / scale;
+        print('scalechange = $scaleChange');
         _transform = matrixScale(_transform, scaleChange);
-        scale = _transform.getMaxScaleOnAxis();
+        Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), _transform);
 
+//    if (gestureType == _GestureType.translate) {
+        if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
+          _animateResetInitialize();
+        }
+        scale = _transform.getMaxScaleOnAxis();
+        print('scale = $scale');
         // While scaling, translate such that the user's two fingers stay on the
         // same places in the scene. That means that the focal point of the
         // scale should be on the same place in the scene before and after the
@@ -554,8 +567,7 @@ class _GestureTransformableState extends State<GestureTransformable>
     _controller.reset();
 
     // If the scale ended with velocity, animate inertial movement
-    final velocityTotal = details.velocity.pixelsPerSecond.dx.abs() +
-        details.velocity.pixelsPerSecond.dy.abs();
+    final velocityTotal = details.velocity.pixelsPerSecond.dx.abs() + details.velocity.pixelsPerSecond.dy.abs();
     if (velocityTotal == 0) {
       return;
     }
@@ -567,8 +579,7 @@ class _GestureTransformableState extends State<GestureTransformable>
       begin: translation,
       end: inertialMotion.finalPosition,
     ).animate(_controller);
-    _controller.duration =
-        Duration(milliseconds: inertialMotion.duration.toInt());
+    _controller.duration = Duration(milliseconds: inertialMotion.duration.toInt());
     _animation.addListener(_onAnimate);
     _controller.fling();
   }
