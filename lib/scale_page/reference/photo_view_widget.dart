@@ -8,14 +8,9 @@ import 'transformations_demo_inertial_motion.dart';
 
 // BEGIN transformationsDemo#3
 
-// This widget allows 2D transform interactions on its child in relation to its
-// parent. The user can transform the child by dragging to pan or pinching to
-// zoom and rotate. All event callbacks for GestureDetector are supported, and
-// the coordinates that are given are untransformed and in relation to the
-// original position of the child.
 @immutable
-class GestureTransformable extends StatefulWidget {
-  const GestureTransformable({
+class TEPhotoViewWidget extends StatefulWidget {
+  const TEPhotoViewWidget({
     this.conKey,
     // The child to perform the transformations on.
     @required this.child,
@@ -73,8 +68,6 @@ class GestureTransformable extends StatefulWidget {
     this.onScaleStart,
     this.onScaleUpdate,
     this.onScaleEnd,
-    this.onScale,
-    this.onTranslate,
     this.gestureType,
   })  : assert(child != null),
         assert(size != null),
@@ -132,12 +125,10 @@ class GestureTransformable extends StatefulWidget {
   final Key conKey;
 
   //self define
-  final ValueChanged<int> onTranslate;
-  final ValueChanged<int> onScale;
   final int gestureType;
 
   @override
-  _GestureTransformableState createState() => _GestureTransformableState();
+  TEPhotoViewWidgetState createState() => TEPhotoViewWidgetState();
 }
 
 // A single user event can only represent one of these gestures. The user can't
@@ -149,7 +140,7 @@ enum _GestureType {
 }
 
 // This is public only for access from a unit test.
-class _GestureTransformableState extends State<GestureTransformable> with TickerProviderStateMixin {
+class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProviderStateMixin {
   Animation<Offset> _animation;
   AnimationController _controller;
   Animation<Matrix4> _animationReset;
@@ -182,6 +173,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
   }
 
   // Return the scene point at the given viewport point.
+//  static Offset fromViewport(Offset viewportPoint, Matrix4 transform) {
   static Offset fromViewport(Offset viewportPoint, Matrix4 transform) {
     // On viewportPoint, perform the inverse transformation of the scene to get
     // where the point would be in the scene before the transformation.
@@ -219,7 +211,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
   }
 
   @override
-  void didUpdateWidget(GestureTransformable oldWidget) {
+  void didUpdateWidget(TEPhotoViewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.reset && !oldWidget.reset && _animationReset == null) {
       _animateResetInitialize();
@@ -350,15 +342,6 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
 
     // Clamp translation so the viewport remains inside _boundaryRect.
     final scale = _transform.getMaxScaleOnAxis(); //倍数
-//    final scaledSize = widget.size / scale; //
-//    print('scale = $scale, scaledSize = $scaledSize');
-    // 可见部分
-//    final viewportBoundaries = Rect.fromLTRB(
-//      _boundaryRect.left,
-//      _boundaryRect.top,
-//      _boundaryRect.right - scaledSize.width,
-//      _boundaryRect.bottom - scaledSize.height,
-//    );
     final viewportBoundaries = Rect.fromLTRB(
       _boundaryRect.left,
       _boundaryRect.top,
@@ -373,7 +356,6 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
       -scale * viewportBoundaries.left,
       -scale * viewportBoundaries.top,
     );
-    print('ttttt = $translation');
     final nextMatrix = matrix.clone()
       ..translate(
         translation.dx,
@@ -385,7 +367,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
       nextTranslationVector.y,
     );
     print(nextTranslation);
-    if(gestureType == _GestureType.translate) {
+    if (gestureType == _GestureType.translate) {
       bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
       if (!inBoundaries) {
         // TODO(justinmc): Instead of canceling translation when it goes out of
@@ -403,7 +385,7 @@ class _GestureTransformableState extends State<GestureTransformable> with Ticker
       }
       print('translate, offset = $br, type = $gestureType');
     }
-print(1);
+    print(1);
     return nextMatrix;
   }
 
@@ -414,15 +396,6 @@ print(1);
       return matrix;
     }
     assert(scale != 0);
-
-    // Don't allow a scale that moves the viewport outside of _boundaryRect.
-//    final tl = fromViewport(const Offset(0, 0), _transform);
-//    final tr = fromViewport(Offset(widget.size.width, 0), _transform);
-//    final bl = fromViewport(Offset(0, widget.size.height), _transform);
-//    final br = fromViewport(Offset(widget.size.width, widget.size.height), _transform);
-//    if (!_boundaryRect.contains(tl) || !_boundaryRect.contains(tr) || !_boundaryRect.contains(bl) || !_boundaryRect.contains(br)) {
-//      return matrix;
-//    }
 
     // Don't allow a scale that results in an overall scale beyond min/max
     // scale.
@@ -440,9 +413,6 @@ print(1);
     return matrix..scale(clampedScale);
   }
 
-  // Return a new matrix representing the given matrix after applying the given
-  // rotation transform.
-  // Rotating the scene cannot cause the viewport to view beyond _boundaryRect.
   Matrix4 matrixRotate(Matrix4 matrix, double rotation, Offset focalPoint) {
     if (widget.disableRotation || rotation == 0) {
       return matrix;
@@ -507,9 +477,6 @@ print(1);
     }
     setState(() {
       if (gestureType == _GestureType.scale && _scaleStart != null) {
-        // details.scale gives us the amount to change the scale as of the
-        // start of this gesture, so calculate the amount to scale as of the
-        // previous call to _onScaleUpdate.
         final desiredScale = _scaleStart * details.scale;
         final scaleChange = desiredScale / scale;
 //        print('before scale = ${_transform.getMaxScaleOnAxis()}');
@@ -522,10 +489,6 @@ print(1);
         }
         scale = _transform.getMaxScaleOnAxis();
 //        print('after scale = $scale');
-        // While scaling, translate such that the user's two fingers stay on the
-        // same places in the scene. That means that the focal point of the
-        // scale should be on the same place in the scene before and after the
-        // scale.
         final focalPointSceneNext = fromViewport(details.focalPoint, _transform);
 //        print('focalPointSceneNext = $focalPointSceneNext, focalPointScene = $focalPointScene, value = ${focalPointSceneNext - focalPointScene}');
         _transform = matrixTranslate(_transform, focalPointSceneNext - focalPointScene);
@@ -534,14 +497,9 @@ print(1);
         _transform = matrixRotate(_transform, _currentRotation - desiredRotation, details.focalPoint);
         _currentRotation = desiredRotation;
       } else if (_translateFromScene != null && details.scale == 1) {
-        // Translate so that the same point in the scene is underneath the
-        // focal point before and after the movement.
         final translationChange = focalPointScene - _translateFromScene;
         _transform = matrixTranslate(_transform, translationChange);
         _translateFromScene = fromViewport(details.focalPoint, _transform);
-        if (widget.onTranslate != null) {
-          widget.onTranslate(gestureType.index);
-        }
       }
     });
   }

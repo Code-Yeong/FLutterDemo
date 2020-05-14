@@ -4,9 +4,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/utils/render_box_util.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'photo_view_widget.dart';
 import 'transformations_demo_board.dart';
 import 'transformations_demo_edit_board_point.dart';
-import 'transformations_demo_gesture_transformable.dart';
 
 // BEGIN transformationsDemo#1
 
@@ -201,68 +202,75 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
             final size = Size(constraints.maxWidth, constraints.maxHeight);
 //            final visibleSize = Size(size.width * 3, size.height * 2);
             final visibleSize = Size(size.width, size.height);
-            return GestureTransformable(
+            TEPhotoViewWidget photoView = TEPhotoViewWidget(
               conKey: conKey,
-              onTranslate: (offset) {
-                gestureType = offset;
-              },
-              onScale: (scale) {
-                gestureType = scale;
-              },
               reset: _reset,
+              onTapUp: (details) {
+                print('clicked = ${details.localPosition}, global = ${details.globalPosition}');
+              },
               onResetEnd: () {
                 setState(() {
                   _reset = false;
                 });
               },
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Wrap(children: _textList.sublist(0, 14)),
-                          Container(height: 20.0, width: double.infinity),
-                          Wrap(children: _textList.sublist(14, 27)),
-                        ],
-                      ),
-                    ),
-                  ),
-                  ClipPath(
-                      clipBehavior: Clip.antiAlias,
-                      clipper: RectClipper(
-                        position: position,
-                        ratio: (_animationController.value * _kAudioDuration - position * avgTime) / avgTime,
-                        cxt: key[position].currentContext,
-                        translated: translate,
-                        scaled: scaled,
-                      ),
-                      child: Container(
-                        margin: EdgeInsets.only(top: 0.0),
-                        color: Colors.blue.withOpacity(0.2),
-                        padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Wrap(children: _textList2.sublist(0, 14)),
-                              Container(height: 20.0, width: double.infinity),
-                              Wrap(children: _textList2.sublist(14, 27)),
-                            ],
-                          ),
-                        ),
-                      )),
-                ],
-              ),
+//              child: Stack(
+//                children: <Widget>[
+//                  Container(
+//                    color: Colors.white,
+//                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+//                    child: Center(
+//                      child: Column(
+//                        mainAxisSize: MainAxisSize.min,
+//                        children: <Widget>[
+//                          Wrap(children: _textList.sublist(0, 14)),
+//                          Container(height: 20.0, width: double.infinity),
+//                          Wrap(children: _textList.sublist(14, 27)),
+//                        ],
+//                      ),
+//                    ),
+//                  ),
+//                  ClipPath(
+//                      clipBehavior: Clip.antiAlias,
+//                      clipper: RectClipper(
+//                        position: position,
+//                        ratio: (_animationController.value * _kAudioDuration - position * avgTime) / avgTime,
+//                        cxt: key[position].currentContext,
+//                        translated: translate,
+//                        scaled: scaled,
+//                      ),
+//                      child: Container(
+//                        margin: EdgeInsets.only(top: 0.0),
+//                        color: Colors.blue.withOpacity(0.2),
+//                        padding: EdgeInsets.symmetric(horizontal: 20.0),
+//                        child: Center(
+//                          child: Column(
+//                            mainAxisSize: MainAxisSize.min,
+//                            children: <Widget>[
+//                              Wrap(children: _textList2.sublist(0, 14)),
+//                              Container(height: 20.0, width: double.infinity),
+//                              Wrap(children: _textList2.sublist(14, 27)),
+//                            ],
+//                          ),
+//                        ),
+//                      )),
+//                ],
+//              ),
 //              boundaryRect: Rect.fromLTWH(
 //                -visibleSize.width / 2,
 //                -visibleSize.height / 2,
 //                visibleSize.width,
 //                visibleSize.height,
 //              ),
+//              child: SvgPicture.asset('assets/svg/report_bg_layer_1.svg',color: Colors.white,),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: <Widget>[
+                  Image.asset('assets/images/test_pic.jpg'),
+                  Image.asset(
+                    'assets/images/test_pic.jpeg',
+                  ),
+                ],
+              ),
               boundaryRect: Rect.fromLTWH(
                 0,
                 0,
@@ -273,6 +281,7 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
               size: size,
               disableRotation: true,
             );
+            return photoView;
           },
         ),
       ),
