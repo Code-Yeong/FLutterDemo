@@ -199,15 +199,8 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
         color: backgroundColor,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final size = Size(constraints.maxWidth, constraints.maxHeight);
-//            final visibleSize = Size(size.width * 3, size.height * 2);
-            final visibleSize = Size(size.width, size.height);
-            TEPhotoViewWidget photoView = TEPhotoViewWidget(
-              conKey: conKey,
-              reset: _reset,
-              onTapUp: (details) {
-                print('clicked = ${details.localPosition}, global = ${details.globalPosition}');
-              },
+            return TEPhotoViewWidget(
+              key: conKey,
               onResetEnd: () {
                 setState(() {
                   _reset = false;
@@ -255,33 +248,15 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
 //                      )),
 //                ],
 //              ),
-//              boundaryRect: Rect.fromLTWH(
-//                -visibleSize.width / 2,
-//                -visibleSize.height / 2,
-//                visibleSize.width,
-//                visibleSize.height,
-//              ),
-//              child: SvgPicture.asset('assets/svg/report_bg_layer_1.svg',color: Colors.white,),
               child: Stack(
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
-                  Image.asset('assets/images/test_pic.jpg'),
-                  Image.asset(
-                    'assets/images/test_pic.jpeg',
-                  ),
+                  Image.asset('assets/images/grandpa.png'),
+                  SvgPicture.asset('assets/svg/report_bg_layer_1.svg'),
                 ],
               ),
-              boundaryRect: Rect.fromLTWH(
-                0,
-                0,
-                visibleSize.width,
-                visibleSize.height,
-              ),
-              initialTranslation: Offset(0, 0),
-              size: size,
-              disableRotation: true,
+              size: Size(constraints.maxWidth, constraints.maxHeight * 4 / 5),
             );
-            return photoView;
           },
         ),
       ),
@@ -292,9 +267,7 @@ class _TransformationsDemoState extends State<TransformationsDemo> with SingleTi
   IconButton get resetButton {
     return IconButton(
       onPressed: () {
-        setState(() {
-          _reset = true;
-        });
+        (conKey.currentState as TEPhotoViewWidgetState).animateResetInitialize();
       },
       tooltip: 'reset',
       color: Theme.of(context).colorScheme.surface,

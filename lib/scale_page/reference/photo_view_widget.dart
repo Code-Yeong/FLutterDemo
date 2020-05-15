@@ -1,47 +1,23 @@
-// Copyright 2019 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math.dart' show Vector2;
 import 'package:vector_math/vector_math_64.dart' show Vector3;
-import 'transformations_demo_inertial_motion.dart';
-
-// BEGIN transformationsDemo#3
 
 @immutable
 class TEPhotoViewWidget extends StatefulWidget {
   const TEPhotoViewWidget({
-    this.conKey,
-    // The child to perform the transformations on.
+    this.key,
     @required this.child,
-    // The desired visible size of the widget and the area that is receptive to
-    // gestures. If a widget that's as big as possible is desired, then wrap
-    // this in a LayoutBuilder and pass
-    // `Size(constraints.maxWidth, constraints.maxHeight)`.
     @required this.size,
-    // The scale will be clamped to between these values. A maxScale of null has
-    // no bounds. minScale must be greater than zero.
     this.maxScale = 2.5,
     this.minScale = 0.8,
-    // Transforms will be limited so that the viewport can not view beyond this
-    // Rect. The Rect does not rotate with the rest of the scene, so it is
-    // always aligned with the viewport. A null boundaryRect results in no
-    // limits to the distance that the viewport can be transformed to see.
-    this.boundaryRect,
-    // Initial values for the transform can be provided.
-    this.initialTranslation,
+    this.initialTranslation = const Offset(0.0, 0.0),
     this.initialScale,
     this.initialRotation,
-    // Any and all of the possible transformations can be disabled.
     this.disableTranslation = false,
     this.disableScale = false,
-    this.disableRotation = false,
-    // If set to true, this widget will animate back to its initial transform
-    // and call onResetEnd when done. When utilizing reset, onResetEnd should
-    // also be implemented, and it should set reset to false when called.
-    this.reset = false,
-    // Access to event callbacks from GestureDetector. Called with untransformed
-    // coordinates in an Offset.
+    this.disableRotation = true,
     this.onTapDown,
     this.onTapUp,
     this.onTap,
@@ -76,17 +52,11 @@ class TEPhotoViewWidget extends StatefulWidget {
         assert(disableTranslation != null),
         assert(disableScale != null),
         assert(disableRotation != null),
-        assert(reset != null),
-        assert(
-          !reset || onResetEnd != null,
-          'Must implement onResetEnd to use reset.',
-        );
-
-//        super(key: key);
+        super(key: key);
 
   final Widget child;
   final Size size;
-  final bool reset;
+
   final GestureTapDownCallback onTapDown;
   final GestureTapUpCallback onTapUp;
   final GestureTapCallback onTap;
@@ -115,14 +85,13 @@ class TEPhotoViewWidget extends StatefulWidget {
   final GestureScaleEndCallback onScaleEnd;
   final double maxScale;
   final double minScale;
-  final Rect boundaryRect;
   final bool disableTranslation;
   final bool disableScale;
   final bool disableRotation;
   final Offset initialTranslation;
   final double initialScale;
   final double initialRotation;
-  final Key conKey;
+  final Key key;
 
   //self define
   final int gestureType;
@@ -153,7 +122,7 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
   double _scaleStart; // Scale value at start of scaling gesture.
   double _rotationStart = 0; // Rotation at start of rotation gesture.
   Rect _boundaryRect;
-  Matrix4 _transform = Matrix4.identity();
+  static Matrix4 _transform = Matrix4.identity();
   double _currentRotation = 0;
   _GestureType gestureType;
 
@@ -174,10 +143,10 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
 
   // Return the scene point at the given viewport point.
 //  static Offset fromViewport(Offset viewportPoint, Matrix4 transform) {
-  static Offset fromViewport(Offset viewportPoint, Matrix4 transform) {
+  static Offset fromViewport(Offset viewportPoint, {Matrix4 transform}) {
     // On viewportPoint, perform the inverse transformation of the scene to get
     // where the point would be in the scene before the transformation.
-    final inverseMatrix = Matrix4.inverted(transform);
+    final inverseMatrix = Matrix4.inverted(transform ?? _transform);
     final untransformed = inverseMatrix.transform3(Vector3(
       viewportPoint.dx,
       viewportPoint.dy,
@@ -196,28 +165,15 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
   @override
   void initState() {
     super.initState();
-    _boundaryRect = widget.boundaryRect ?? Offset.zero & widget.size;
-//    print('origin boundary = $_boundaryRect');
+    _boundaryRect = Offset.zero & widget.size;
     _transform = _initialTransform;
-    _controller = AnimationController(
-      vsync: this,
-    );
-    _controllerReset = AnimationController(
-      vsync: this,
-    );
-    if (widget.reset) {
-      _animateResetInitialize();
-    }
+    _controller = AnimationController(vsync: this);
+    _controllerReset = AnimationController(vsync: this);
   }
 
   @override
   void didUpdateWidget(TEPhotoViewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.reset && !oldWidget.reset && _animationReset == null) {
-      _animateResetInitialize();
-    } else if (!widget.reset && oldWidget.reset && _animationReset != null) {
-      _animateResetStop();
-    }
   }
 
   @override
@@ -231,14 +187,14 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
           ? null
           : (details) {
               widget.onTapDown(TapDownDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onTapUp: widget.onTapUp == null
           ? null
           : (details) {
               widget.onTapUp(TapUpDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onTap: widget.onTap,
@@ -250,21 +206,21 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
           ? null
           : (details) {
               widget.onVerticalDragDown(DragDownDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onVerticalDragStart: widget.onVerticalDragStart == null
           ? null
           : (details) {
               widget.onVerticalDragStart(DragStartDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onVerticalDragUpdate: widget.onVerticalDragUpdate == null
           ? null
           : (details) {
               widget.onVerticalDragUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onVerticalDragEnd: widget.onVerticalDragEnd,
@@ -273,21 +229,21 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
           ? null
           : (details) {
               widget.onHorizontalDragDown(DragDownDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onHorizontalDragStart: widget.onHorizontalDragStart == null
           ? null
           : (details) {
               widget.onHorizontalDragStart(DragStartDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onHorizontalDragUpdate: widget.onHorizontalDragUpdate == null
           ? null
           : (details) {
               widget.onHorizontalDragUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onHorizontalDragEnd: widget.onHorizontalDragEnd,
@@ -296,21 +252,21 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
           ? null
           : (details) {
               widget.onPanDown(DragDownDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onPanStart: widget.onPanStart == null
           ? null
           : (details) {
               widget.onPanStart(DragStartDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onPanUpdate: widget.onPanUpdate == null
           ? null
           : (details) {
               widget.onPanUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context), _transform),
+                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
               ));
             },
       onPanEnd: widget.onPanEnd,
@@ -323,7 +279,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
         child: Transform(
           transform: _transform,
           child: Container(
-            key: widget.conKey,
             child: widget.child,
             height: widget.size.height,
             width: widget.size.width,
@@ -335,81 +290,57 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
 
   // Return a new matrix representing the given matrix after applying the given
   // translation.
-  Matrix4 matrixTranslate(Matrix4 matrix, Offset translation) {
+  Matrix4 matrixTranslate(Matrix4 matrix, Offset translation, {bool boundaryRestrict = true}) {
     if (widget.disableTranslation || translation == Offset.zero) {
       return matrix;
     }
 
-    // Clamp translation so the viewport remains inside _boundaryRect.
     final scale = _transform.getMaxScaleOnAxis(); //倍数
-    final viewportBoundaries = Rect.fromLTRB(
-      _boundaryRect.left,
-      _boundaryRect.top,
-      _boundaryRect.right,
-      _boundaryRect.bottom,
-    );
-    // Translation is reversed (a positive translation moves the scene to the
-    // right, viewport to the left).
+    final viewportBoundaries = Rect.fromLTRB(_boundaryRect.left, _boundaryRect.top, _boundaryRect.right, _boundaryRect.bottom);
     final translationBoundaries = Rect.fromLTRB(
       -scale * viewportBoundaries.right,
       -scale * viewportBoundaries.bottom,
       -scale * viewportBoundaries.left,
       -scale * viewportBoundaries.top,
     );
-    final nextMatrix = matrix.clone()
-      ..translate(
-        translation.dx,
-        translation.dy,
-      );
-    final nextTranslationVector = nextMatrix.getTranslation();
-    final nextTranslation = Offset(
-      nextTranslationVector.x,
-      nextTranslationVector.y,
-    );
-    print(nextTranslation);
-    if (gestureType == _GestureType.translate) {
-      bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
-      if (!inBoundaries) {
-        // TODO(justinmc): Instead of canceling translation when it goes out of
-        // bounds, stop translation at boundary.
-        return matrix;
+
+    if (boundaryRestrict) {
+      print('213131');
+      final nextMatrix = matrix.clone()..translate(translation.dx, translation.dy);
+      final nextTranslationVector = nextMatrix.getTranslation();
+      final nextTranslation = Offset(nextTranslationVector.x, nextTranslationVector.y);
+      if (gestureType == _GestureType.translate) {
+        bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
+        if (!inBoundaries) {
+          // 限制左上角
+          return matrix;
+        }
+        Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), transform: nextMatrix);
+        if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
+          // 限制右下角
+          return matrix;
+        }
       }
-//    if(gestureType == _GestureType.scale) {
-//      if (nextTranslation.dx < _boundaryRect.left || nextTranslation.dy < _boundaryRect.top) {
-//        return matrix;
-//      }
-//    }
-      Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), nextMatrix);
-      if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
-        return matrix;
-      }
-      print('translate, offset = $br, type = $gestureType');
+      return nextMatrix;
+    } else {
+      // 收缩按焦点对齐
+      matrix.translate(translation.dx, translation.dy);
+      return matrix;
     }
-    print(1);
-    return nextMatrix;
   }
 
-  // Return a new matrix representing the given matrix after applying the given
-  // scale transform.
+// Return a new matrix representing the given matrix after applying the given
+// scale transform.
   Matrix4 matrixScale(Matrix4 matrix, double scale) {
     if (widget.disableScale || scale == 1) {
       return matrix;
     }
     assert(scale != 0);
 
-    // Don't allow a scale that results in an overall scale beyond min/max
-    // scale.
     final currentScale = _transform.getMaxScaleOnAxis();
     final totalScale = currentScale * scale;
-    final clampedTotalScale = totalScale.clamp(
-      widget.minScale,
-      widget.maxScale,
-    ) as double;
+    final clampedTotalScale = totalScale.clamp(widget.minScale, widget.maxScale) as double;
     final clampedScale = clampedTotalScale / currentScale;
-//    if (clampedTotalScale < ) {
-//      return matrix;
-//    }
-//    print('clampedScale = $clampedScale, clampedTotalScale = $clampedTotalScale, currentScale = $currentScale, scale = $scale');
     return matrix..scale(clampedScale);
   }
 
@@ -417,14 +348,14 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     if (widget.disableRotation || rotation == 0) {
       return matrix;
     }
-    final focalPointScene = fromViewport(focalPoint, matrix);
+    final focalPointScene = fromViewport(focalPoint, transform: matrix);
     return matrix
       ..translate(focalPointScene.dx, focalPointScene.dy)
       ..rotateZ(-rotation)
       ..translate(-focalPointScene.dx, -focalPointScene.dy);
   }
 
-  // Handle the start of a gesture of _GestureType.
+// Handle the start of a gesture of _GestureType.
   void _onScaleStart(ScaleStartDetails details) {
     if (widget.onScaleStart != null) {
       widget.onScaleStart(details);
@@ -443,30 +374,24 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     gestureType = null;
     setState(() {
       _scaleStart = _transform.getMaxScaleOnAxis();
-      _translateFromScene = fromViewport(details.focalPoint, _transform);
+      _translateFromScene = fromViewport(details.focalPoint);
       _rotationStart = _currentRotation;
     });
   }
 
-  // Handle an update to an ongoing gesture of _GestureType.
+// Handle an update to an ongoing gesture of _GestureType.
   void _onScaleUpdate(ScaleUpdateDetails details) {
+    print('123');
     var scale = _transform.getMaxScaleOnAxis();
     if (widget.onScaleUpdate != null) {
       widget.onScaleUpdate(ScaleUpdateDetails(
-        focalPoint: fromViewport(details.focalPoint, _transform),
+        focalPoint: fromViewport(details.focalPoint),
         scale: details.scale,
         rotation: details.rotation,
       ));
     }
-    final focalPointScene = fromViewport(
-      details.focalPoint,
-      _transform,
-    );
+    final focalPointScene = fromViewport(details.focalPoint);
     if (gestureType == null) {
-      // Decide which type of gesture this is by comparing the amount of scale
-      // and rotation in the gesture, if any. Scale starts at 1 and rotation
-      // starts at 0. Translate will have 0 scale and 0 rotation because it uses
-      // only one finger.
       if ((details.scale - 1).abs() > details.rotation.abs()) {
         gestureType = _GestureType.scale;
       } else if (details.rotation != 0) {
@@ -479,19 +404,10 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
       if (gestureType == _GestureType.scale && _scaleStart != null) {
         final desiredScale = _scaleStart * details.scale;
         final scaleChange = desiredScale / scale;
-//        print('before scale = ${_transform.getMaxScaleOnAxis()}');
         _transform = matrixScale(_transform, scaleChange);
-        Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), _transform);
-
-//    if (gestureType == _GestureType.translate) {
-        if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
-          _animateResetInitialize();
-        }
         scale = _transform.getMaxScaleOnAxis();
-//        print('after scale = $scale');
-        final focalPointSceneNext = fromViewport(details.focalPoint, _transform);
-//        print('focalPointSceneNext = $focalPointSceneNext, focalPointScene = $focalPointScene, value = ${focalPointSceneNext - focalPointScene}');
-        _transform = matrixTranslate(_transform, focalPointSceneNext - focalPointScene);
+        final focalPointSceneNext = fromViewport(details.focalPoint);
+        _transform = matrixTranslate(_transform, focalPointSceneNext - focalPointScene, boundaryRestrict: false);
       } else if (gestureType == _GestureType.rotate && details.rotation != 0) {
         final desiredRotation = _rotationStart + details.rotation;
         _transform = matrixRotate(_transform, _currentRotation - desiredRotation, details.focalPoint);
@@ -499,15 +415,45 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
       } else if (_translateFromScene != null && details.scale == 1) {
         final translationChange = focalPointScene - _translateFromScene;
         _transform = matrixTranslate(_transform, translationChange);
-        _translateFromScene = fromViewport(details.focalPoint, _transform);
+        _translateFromScene = fromViewport(details.focalPoint);
       }
     });
   }
 
-  // Handle the end of a gesture of _GestureType.
+// Handle the end of a gesture of _GestureType.
   void _onScaleEnd(ScaleEndDetails details) {
     if (widget.onScaleEnd != null) {
       widget.onScaleEnd(details);
+    }
+    if (_transform.getMaxScaleOnAxis() < 1) {
+      // 结束缩放动作，如果处于收缩状态，则恢复原状
+      animateResetInitialize(destination: _initialTransform);
+    } else {
+      Offset br = fromViewport(Offset(widget.size.width, widget.size.height)); // 右下角位置
+      Offset lt = fromViewport(Offset(0, 0)); // 座山叫位置
+      Matrix4 destination = _transform.clone();
+      if (br.dx > widget.size.width && br.dy > widget.size.height) {
+        // 右边、下面超出范围
+        destination.translate(br.dx - widget.size.width, br.dy - widget.size.height);
+      } else if (br.dx > widget.size.width) {
+        // 右边超出范围
+        destination.translate(br.dx - widget.size.width, 0.0);
+      } else if (br.dy > widget.size.height) {
+        // 下边超出范围
+        destination.translate(0.0, br.dy - widget.size.height);
+      }
+      if (lt.dx < 0 && lt.dy < 0) {
+        // 左边、上边超出范围
+        destination.translate(lt.dx, lt.dy);
+      } else if (lt.dx < 0) {
+        // 左边超出范围
+        destination.translate(lt.dx, 0.0);
+      } else if (lt.dy < 0) {
+        // 上边超出范围
+        destination.translate(0.0, lt.dy);
+      }
+      animateResetInitialize(destination: destination, duration: 200);
+      _transform = destination;
     }
     setState(() {
       _scaleStart = null;
@@ -518,33 +464,32 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     _animation?.removeListener(_onAnimate);
     _controller.reset();
 
-    // If the scale ended with velocity, animate inertial movement
-    final velocityTotal = details.velocity.pixelsPerSecond.dx.abs() + details.velocity.pixelsPerSecond.dy.abs();
-    if (velocityTotal == 0) {
-      return;
-    }
-
-    final translationVector = _transform.getTranslation();
-    final translation = Offset(translationVector.x, translationVector.y);
-    final inertialMotion = InertialMotion(details.velocity, translation);
-    _animation = Tween<Offset>(
-      begin: translation,
-      end: inertialMotion.finalPosition,
-    ).animate(_controller);
-    _controller.duration = Duration(milliseconds: inertialMotion.duration.toInt());
-    _animation.addListener(_onAnimate);
-    _controller.fling();
+//    // If the scale ended with velocity, animate inertial movement
+//    final velocityTotal = details.velocity.pixelsPerSecond.dx.abs() + details.velocity.pixelsPerSecond.dy.abs();
+//    if (velocityTotal == 0) {
+//      return;
+//    }else{
+////      print('velocityTotal = $velocityTotal');
+//    }
+//    final translationVector = _transform.getTranslation();
+//    final translation = Offset(translationVector.x, translationVector.y);
+//    final inertialMotion = InertialMotion(details.velocity, translation);
+//    _animation = Tween<Offset>(
+//      begin: translation,
+//      end: inertialMotion.finalPosition,
+//    ).animate(_controller);
+//    _controller.duration = Duration(milliseconds: inertialMotion.duration.toInt());
+//    _animation.addListener(_onAnimate);
+//    _controller.fling();
   }
 
-  // Handle inertia drag animation.
+// Handle inertia drag animation.
   void _onAnimate() {
     setState(() {
-      // Translate _transform such that the resulting translation is
-      // _animation.value.
       final translationVector = _transform.getTranslation();
       final translation = Offset(translationVector.x, translationVector.y);
-      final translationScene = fromViewport(translation, _transform);
-      final animationScene = fromViewport(_animation.value, _transform);
+      final translationScene = fromViewport(translation);
+      final animationScene = fromViewport(_animation.value);
       final translationChangeScene = animationScene - translationScene;
       _transform = matrixTranslate(_transform, translationChangeScene);
     });
@@ -555,7 +500,7 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     }
   }
 
-  // Handle reset to home transform animation.
+// Handle reset to home transform animation.
   void _onAnimateReset() {
     setState(() {
       _transform = _animationReset.value;
@@ -568,19 +513,19 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     }
   }
 
-  // Initialize the reset to home transform animation.
-  void _animateResetInitialize() {
+// Initialize the reset to home transform animation.
+  void animateResetInitialize({Matrix4 destination, int duration = 200}) {
     _controllerReset.reset();
     _animationReset = Matrix4Tween(
       begin: _transform,
-      end: _initialTransform,
+      end: destination ?? _initialTransform,
     ).animate(_controllerReset);
-    _controllerReset.duration = const Duration(milliseconds: 400);
+    _controllerReset.duration = Duration(milliseconds: duration);
     _animationReset.addListener(_onAnimateReset);
     _controllerReset.forward();
   }
 
-  // Stop a running reset to home transform animation.
+// Stop a running reset to home transform animation.
   void _animateResetStop() {
     _controllerReset.stop();
     _animationReset?.removeListener(_onAnimateReset);
@@ -598,3 +543,67 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
 }
 
 // END
+
+// Provides calculations for an object moving with inertia and friction using
+// the equation of motion from physics.
+// https://en.wikipedia.org/wiki/Equations_of_motion#Constant_translational_acceleration_in_a_straight_line
+// TODO(justinmc): Can this be replaced with friction_simulation.dart?
+@immutable
+class InertialMotion {
+  const InertialMotion(this._initialVelocity, this._initialPosition);
+
+  static const double _kFrictionalAcceleration = 0.01; // How quickly to stop
+  final Velocity _initialVelocity;
+  final Offset _initialPosition;
+
+  // The position when the motion stops.
+  Offset get finalPosition {
+    return _getPositionAt(Duration(milliseconds: duration.toInt()));
+  }
+
+  // The total time that the animation takes start to stop in milliseconds.
+  double get duration {
+    return (_initialVelocity.pixelsPerSecond.dx / 1000 / _acceleration.x).abs();
+  }
+
+  // The acceleration opposing the initial velocity in x and y components.
+  Vector2 get _acceleration {
+    // TODO(justinmc): Find actual velocity instead of summing?
+    final velocityTotal = _initialVelocity.pixelsPerSecond.dx.abs() + _initialVelocity.pixelsPerSecond.dy.abs();
+    final vRatioX = _initialVelocity.pixelsPerSecond.dx / velocityTotal;
+    final vRatioY = _initialVelocity.pixelsPerSecond.dy / velocityTotal;
+    return Vector2(
+      _kFrictionalAcceleration * vRatioX,
+      _kFrictionalAcceleration * vRatioY,
+    );
+  }
+
+  // The position at a given time.
+  Offset _getPositionAt(Duration time) {
+    final xf = _getPosition(
+      r0: _initialPosition.dx,
+      v0: _initialVelocity.pixelsPerSecond.dx / 1000,
+      t: time.inMilliseconds,
+      a: _acceleration.x,
+    );
+    final yf = _getPosition(
+      r0: _initialPosition.dy,
+      v0: _initialVelocity.pixelsPerSecond.dy / 1000,
+      t: time.inMilliseconds,
+      a: _acceleration.y,
+    );
+    return Offset(xf, yf);
+  }
+
+  // Solve the equation of motion to find the position at a given point in time
+  // in one dimension.
+  double _getPosition({double r0, double v0, int t, double a}) {
+    // Stop movement when it would otherwise reverse direction.
+    final stopTime = (v0 / a).abs();
+    if (t > stopTime) {
+      t = stopTime.toInt();
+    }
+
+    return r0 + v0 * t + 0.5 * a * pow(t, 2);
+  }
+}
