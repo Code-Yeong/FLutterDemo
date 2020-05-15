@@ -1,8 +1,47 @@
 import 'dart:math';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:vector_math/vector_math.dart' show Vector2;
 import 'package:vector_math/vector_math_64.dart' show Vector3;
+
+///
+/// 1、图片预览缩放
+///
+/// [child] 要展示的Widget
+/// [size] child大小，限定可视区域
+/// [maxScale],[minScale] 最大放大倍数,最小缩小倍数
+/// [initialRotation] 初始旋转位置
+/// [initialTranslation] 初始平移位置
+/// [initialScale] 初始放大倍数
+/// [onScrollTo] 水平滑动回调函数，返回值是[ScrollDirection.forward]或[ScrollDirection.reverse]，左右翻页时使用
+///
+/// 2、坐标转换
+/// Offset newViewportPoint = TEPhotoViewWidgetState.fromViewport(originalViewportPoint)
+///
+/// 3、用法
+/// PageView.builder(
+///    physics: NeverScrollableScrollPhysics(),
+///    allowImplicitScrolling: true,
+///    controller: _pageController,
+///    itemBuilder: (context, index) {
+///      return TEPhotoViewWidget(
+///        onScrollTo: (direction) {
+///          // 上一页 or 下一页
+///        },
+///        child: Stack(
+///          alignment: AlignmentDirectional.center,
+///          children: <Widget>[
+///            //......
+///          ],
+///        ),
+///        size: MediaQuery.of(context).size,
+///      );
+///    },
+///    itemCount: 10,
+///  )
+///
 
 @immutable
 class TEPhotoViewWidget extends StatefulWidget {
@@ -21,30 +60,15 @@ class TEPhotoViewWidget extends StatefulWidget {
     this.onTapDown,
     this.onTapUp,
     this.onTap,
-    this.onTapCancel,
-    this.onDoubleTap,
-    this.onLongPress,
-    this.onLongPressUp,
-    this.onVerticalDragDown,
-    this.onVerticalDragStart,
-    this.onVerticalDragUpdate,
-    this.onVerticalDragEnd,
-    this.onVerticalDragCancel,
-    this.onHorizontalDragDown,
-    this.onHorizontalDragStart,
-    this.onHorizontalDragUpdate,
-    this.onHorizontalDragEnd,
-    this.onHorizontalDragCancel,
     this.onPanDown,
     this.onPanStart,
     this.onPanUpdate,
     this.onPanEnd,
     this.onPanCancel,
-    this.onResetEnd,
     this.onScaleStart,
     this.onScaleUpdate,
     this.onScaleEnd,
-    this.gestureType,
+    this.onScrollTo,
   })  : assert(child != null),
         assert(size != null),
         assert(minScale != null),
@@ -60,26 +84,11 @@ class TEPhotoViewWidget extends StatefulWidget {
   final GestureTapDownCallback onTapDown;
   final GestureTapUpCallback onTapUp;
   final GestureTapCallback onTap;
-  final GestureTapCancelCallback onTapCancel;
-  final GestureTapCallback onDoubleTap;
-  final GestureLongPressCallback onLongPress;
-  final GestureLongPressUpCallback onLongPressUp;
-  final GestureDragDownCallback onVerticalDragDown;
-  final GestureDragStartCallback onVerticalDragStart;
-  final GestureDragUpdateCallback onVerticalDragUpdate;
-  final GestureDragEndCallback onVerticalDragEnd;
-  final GestureDragCancelCallback onVerticalDragCancel;
-  final GestureDragDownCallback onHorizontalDragDown;
-  final GestureDragStartCallback onHorizontalDragStart;
-  final GestureDragUpdateCallback onHorizontalDragUpdate;
-  final GestureDragEndCallback onHorizontalDragEnd;
-  final GestureDragCancelCallback onHorizontalDragCancel;
   final GestureDragDownCallback onPanDown;
   final GestureDragStartCallback onPanStart;
   final GestureDragUpdateCallback onPanUpdate;
   final GestureDragEndCallback onPanEnd;
   final GestureDragCancelCallback onPanCancel;
-  final VoidCallback onResetEnd;
   final GestureScaleStartCallback onScaleStart;
   final GestureScaleUpdateCallback onScaleUpdate;
   final GestureScaleEndCallback onScaleEnd;
@@ -94,7 +103,7 @@ class TEPhotoViewWidget extends StatefulWidget {
   final Key key;
 
   //self define
-  final int gestureType;
+  final ValueChanged<ScrollDirection> onScrollTo;
 
   @override
   TEPhotoViewWidgetState createState() => TEPhotoViewWidgetState();
@@ -114,10 +123,8 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
   AnimationController _controller;
   Animation<Matrix4> _animationReset;
   AnimationController _controllerReset;
+  bool _handledChangePage = false;
 
-  // The translation that will be applied to the scene (not viewport).
-  // A positive x offset moves the scene right, viewport left.
-  // A positive y offset moves the scene down, viewport up.
   Offset _translateFromScene; // Point where a single translation began.
   double _scaleStart; // Scale value at start of scaling gesture.
   double _rotationStart = 0; // Rotation at start of rotation gesture.
@@ -144,8 +151,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
   // Return the scene point at the given viewport point.
 //  static Offset fromViewport(Offset viewportPoint, Matrix4 transform) {
   static Offset fromViewport(Offset viewportPoint, {Matrix4 transform}) {
-    // On viewportPoint, perform the inverse transformation of the scene to get
-    // where the point would be in the scene before the transformation.
     final inverseMatrix = Matrix4.inverted(transform ?? _transform);
     final untransformed = inverseMatrix.transform3(Vector3(
       viewportPoint.dx,
@@ -161,6 +166,8 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     final renderObject = context.findRenderObject() as RenderBox;
     return renderObject.localToGlobal(Offset.zero);
   }
+
+  static double get scaleValue => _transform.getMaxScaleOnAxis();
 
   @override
   void initState() {
@@ -198,56 +205,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
               ));
             },
       onTap: widget.onTap,
-      onTapCancel: widget.onTapCancel,
-      onDoubleTap: widget.onDoubleTap,
-      onLongPress: widget.onLongPress,
-      onLongPressUp: widget.onLongPressUp,
-      onVerticalDragDown: widget.onVerticalDragDown == null
-          ? null
-          : (details) {
-              widget.onVerticalDragDown(DragDownDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
-              ));
-            },
-      onVerticalDragStart: widget.onVerticalDragStart == null
-          ? null
-          : (details) {
-              widget.onVerticalDragStart(DragStartDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
-              ));
-            },
-      onVerticalDragUpdate: widget.onVerticalDragUpdate == null
-          ? null
-          : (details) {
-              widget.onVerticalDragUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
-              ));
-            },
-      onVerticalDragEnd: widget.onVerticalDragEnd,
-      onVerticalDragCancel: widget.onVerticalDragCancel,
-      onHorizontalDragDown: widget.onHorizontalDragDown == null
-          ? null
-          : (details) {
-              widget.onHorizontalDragDown(DragDownDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
-              ));
-            },
-      onHorizontalDragStart: widget.onHorizontalDragStart == null
-          ? null
-          : (details) {
-              widget.onHorizontalDragStart(DragStartDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
-              ));
-            },
-      onHorizontalDragUpdate: widget.onHorizontalDragUpdate == null
-          ? null
-          : (details) {
-              widget.onHorizontalDragUpdate(DragUpdateDetails(
-                globalPosition: fromViewport(details.globalPosition - getOffset(context)),
-              ));
-            },
-      onHorizontalDragEnd: widget.onHorizontalDragEnd,
-      onHorizontalDragCancel: widget.onHorizontalDragCancel,
       onPanDown: widget.onPanDown == null
           ? null
           : (details) {
@@ -305,19 +262,22 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     );
 
     if (boundaryRestrict) {
-      print('213131');
       final nextMatrix = matrix.clone()..translate(translation.dx, translation.dy);
       final nextTranslationVector = nextMatrix.getTranslation();
       final nextTranslation = Offset(nextTranslationVector.x, nextTranslationVector.y);
       if (gestureType == _GestureType.translate) {
         bool inBoundaries = translationBoundaries.contains(Offset(nextTranslation.dx, nextTranslation.dy));
+        // 限制左上角
         if (!inBoundaries) {
-          // 限制左上角
+          // 触边时触发向左翻页动作
+          _onScrollTo(translation);
           return matrix;
         }
         Offset br = fromViewport(Offset(_boundaryRect.right, _boundaryRect.bottom), transform: nextMatrix);
+        // 限制右下角
         if (br.dx > _boundaryRect.right || br.dy > _boundaryRect.bottom) {
-          // 限制右下角
+          // 触边时触发向右翻页动作
+          _onScrollTo(translation);
           return matrix;
         }
       }
@@ -326,6 +286,22 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
       // 收缩按焦点对齐
       matrix.translate(translation.dx, translation.dy);
       return matrix;
+    }
+  }
+
+  _onScrollTo(Offset translation) {
+    if (_transform.getMaxScaleOnAxis() <= 1.2 && widget.onScrollTo != null) {
+      if (translation.dx > kTouchSlop) {
+        if (!_handledChangePage) {
+          _handledChangePage = true;
+          widget.onScrollTo(ScrollDirection.reverse);
+        }
+      } else if (translation.dx < -kTouchSlop) {
+        if (!_handledChangePage) {
+          _handledChangePage = true;
+          widget.onScrollTo(ScrollDirection.forward);
+        }
+      }
     }
   }
 
@@ -357,6 +333,7 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
 
 // Handle the start of a gesture of _GestureType.
   void _onScaleStart(ScaleStartDetails details) {
+    _handledChangePage = false;
     if (widget.onScaleStart != null) {
       widget.onScaleStart(details);
     }
@@ -381,7 +358,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
 
 // Handle an update to an ongoing gesture of _GestureType.
   void _onScaleUpdate(ScaleUpdateDetails details) {
-    print('123');
     var scale = _transform.getMaxScaleOnAxis();
     if (widget.onScaleUpdate != null) {
       widget.onScaleUpdate(ScaleUpdateDetails(
@@ -400,6 +376,7 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
         gestureType = _GestureType.translate;
       }
     }
+
     setState(() {
       if (gestureType == _GestureType.scale && _scaleStart != null) {
         final desiredScale = _scaleStart * details.scale;
@@ -464,12 +441,12 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     _animation?.removeListener(_onAnimate);
     _controller.reset();
 
-//    // If the scale ended with velocity, animate inertial movement
+    // If the scale ended with velocity, animate inertial movement
 //    final velocityTotal = details.velocity.pixelsPerSecond.dx.abs() + details.velocity.pixelsPerSecond.dy.abs();
 //    if (velocityTotal == 0) {
 //      return;
 //    }else{
-////      print('velocityTotal = $velocityTotal');
+//      print('velocityTotal = $velocityTotal');
 //    }
 //    final translationVector = _transform.getTranslation();
 //    final translation = Offset(translationVector.x, translationVector.y);
@@ -509,7 +486,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
       _animationReset?.removeListener(_onAnimateReset);
       _animationReset = null;
       _controllerReset.reset();
-      widget.onResetEnd();
     }
   }
 
@@ -531,7 +507,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
     _animationReset?.removeListener(_onAnimateReset);
     _animationReset = null;
     _controllerReset.reset();
-    widget.onResetEnd();
   }
 
   @override
@@ -544,10 +519,6 @@ class TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvide
 
 // END
 
-// Provides calculations for an object moving with inertia and friction using
-// the equation of motion from physics.
-// https://en.wikipedia.org/wiki/Equations_of_motion#Constant_translational_acceleration_in_a_straight_line
-// TODO(justinmc): Can this be replaced with friction_simulation.dart?
 @immutable
 class InertialMotion {
   const InertialMotion(this._initialVelocity, this._initialPosition);
