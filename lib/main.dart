@@ -19,6 +19,7 @@ import 'package:flutter_demo/hearo_animation/SizeAnimation.dart';
 import 'package:flutter_demo/hearo_animation/hero_main_page.dart';
 import 'package:flutter_demo/layout_builder/layout_builder_page%5D.dart';
 import 'package:flutter_demo/life_cycle/lifecycle_of_state.dart';
+import 'package:flutter_demo/long_shadow_animation/long_shadow_animation.dart';
 import 'package:flutter_demo/method_channel/method_channel_page.dart';
 import 'package:flutter_demo/overlay/overlay_page.dart';
 import 'package:flutter_demo/random_position_widget/random_position_page.dart';
@@ -148,6 +149,9 @@ class _MyHomePageState extends State<MyHomePage> {
 //          ),
           Container(
             child: _ChoiceEntry(text: 'TransformationsDemo', route: TransformationsDemo()),
+          ),
+          Container(
+            child: _ChoiceEntry(text: 'LongShadowAnimationA', route: LongShadowAnimationApp()),
           ),
         ],
       ),

@@ -297,7 +297,7 @@ class _TEPhotoViewWidgetState extends State<TEPhotoViewWidget> with TickerProvid
   }
 
   _onScrollTo(Offset translation) {
-    if (_transform.getMaxScaleOnAxis() <= 1.2 && widget.onScrollTo != null) {
+    if (_transform.getMaxScaleOnAxis() <= 1.05 && widget.onScrollTo != null) {
       if (translation.dx > kTouchSlop) {
         if (!_handledChangePage) {
           _handledChangePage = true;
